@@ -1,0 +1,17 @@
+'use client'
+
+import { create } from 'zustand'
+
+interface SidebarState {
+  open: boolean
+  setOpen: (open: boolean) => void
+}
+
+export const useSidebarStore = create<SidebarState>((set) => ({
+  open: false,
+  setOpen: (open) => set({ open }),
+}))
+
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
+}
