@@ -4,9 +4,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun } from 'lucide-react'
+import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from 'src/contexts/AuthContext'
 
 export default function Sidebar({
   isOpen,
@@ -20,6 +21,8 @@ export default function Sidebar({
   const [userName, setUserName] = useState('')
   const [userProfile, setUserProfile] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+
+  const { logout } = useAuth();
 
   useEffect(() => {
     const theme = localStorage.getItem('theme')
@@ -138,10 +141,27 @@ export default function Sidebar({
                 >
                   Sistema
                 </Link>
+
+
               </motion.div>
             )}
           </AnimatePresence>
+
+
+          <button
+            onClick={() => logout()}
+            className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+          >
+            <span className="flex items-center gap-3">
+              <LogOutIcon size={18} />
+              Sair
+            </span>
+          </button>
+
         </nav>
+
+
+
 
         <div className="absolute bottom-0 w-full p-4 border-t border-gray-800 flex items-center justify-between">
           <span className="text-sm text-gray-400">Tema</span>

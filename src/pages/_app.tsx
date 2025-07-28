@@ -13,10 +13,11 @@ export default function App({ Component, pageProps }: AppProps) {
   const isPublic = publicRoutes.includes(router.pathname)
 
   if (isPublic) {
-    return
-    <AuthProvider>
-      <Component {...pageProps} />
-    </AuthProvider>
+    return (
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
+    )
   }
 
   return (

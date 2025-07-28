@@ -1,108 +1,147 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'src/lib/axios'
+'use client';
 
-interface Empresa {
-  id: number
-  nome: string
-  grupoEmpresaId: number
-  ativa: string
-}
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthContextType, AuthResponse, EmptyResponse, User } from '@common/data';
 
-interface User {
-  userId: number
-  login: string
-  name: string
-  token: string
-  profile: string
-  senhaAlterada: boolean
-  empresaList: Empresa[]
-}
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthContextType {
-  user: User | null
-  login: (login: string, password: string) => Promise<boolean>
-  logout: () => void
-  validateToken: () => Promise<boolean>
-  changePassword: (senhaAtual: string, novaSenha: string) => Promise<boolean>
-}
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const router = useRouter()
-
+  // Verifica token no localStorage ao inicializar
   useEffect(() => {
-    const stored = localStorage.getItem('user')
-    if (stored) {
-      setUser(JSON.parse(stored))
-    }
-  }, [])
+    const initializeAuth = async () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser) as User;
+        const isValid = await validateToken(parsedUser.token); // <== aqui
 
+        if (isValid) {
+          setUser(parsedUser);
+        } else {
+          localStorage.removeItem('user');
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initializeAuth();
+  }, []);
+
+  // Função para fazer login
   const login = async (login: string, password: string): Promise<boolean> => {
     try {
-      const response = await axios.post('/login', { login, password })
-      if (response.data.success) {
-        const userData = response.data.data
-        setUser(userData)
-        localStorage.setItem('user', JSON.stringify(userData))
-        localStorage.setItem('token', userData.token)
-        return true
+      setIsLoading(true);
+      const response = await fetch('https://multisorteios.dev/msbolaoadmin/apiuniaomais/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ login, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Credenciais inválidas');
       }
-      return false
-    } catch {
-      return false
-    }
-  }
 
+      const authResponse: AuthResponse = await response.json();
+
+      if (!authResponse.success) {
+        //throw new Error(authResponse.errorMessage ?? 'Erro desconhecido');
+        return false;
+      }
+
+      const data = authResponse.data;
+      const userData = {
+        login: data!.login,
+        name: data!.name,
+        token: data!.token,
+        profile: data!.profile,
+        userId: data!.userId,
+        senhaAlterada: data!.senhaAlterada,
+      };
+
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Função para validar token
+  const validateToken = async (tokenToValidate?: string): Promise<boolean> => {
+    const token = tokenToValidate || user?.token;
+
+    if (!token) return false;
+
+    try {
+      const response = await fetch(
+        `https://multisorteios.dev/msbolaoadmin/apiuniaomais/validatetoken?token=${token}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        //throw new Error('Token inválido');
+        return false;
+      }
+
+      const authResponse: EmptyResponse = await response.json();
+
+      if (!authResponse.success) {
+        //throw new Error(authResponse.errorMessage ?? 'Erro desconhecido');
+
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Token validation error:', error);
+      return false;
+    }
+  };
+
+
+  // Função para logout
   const logout = () => {
-    axios.post('/logout', {}, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    }).catch(() => {})
-    setUser(null)
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-    router.push('/login')
-  }
-
-  const validateToken = async (): Promise<boolean> => {
-    try {
-      const token = localStorage.getItem('token')
-      if (!token) return false
-      const response = await axios.post('/validar', {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      return response.data.success
-    } catch {
-      return false
-    }
-  }
-
-  const changePassword = async (senhaAtual: string, novaSenha: string): Promise<boolean> => {
-    try {
-      const token = localStorage.getItem('token')
-      const response = await axios.post('/alterarSenha', {
-        senhaAtual,
-        novaSenha,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      return response.data.success
-    } catch {
-      return false
-    }
-  }
+    setUser(null);
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, validateToken, changePassword }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        profile: user?.profile,
+        login,
+        logout,
+        validateToken,
+        isLoading,
+        senhaAlterada: user?.senhaAlterada ?? false
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export const useAuthContext = () => {
-  const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuthContext must be used within AuthProvider')
-  return context
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
