@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (isValid) {
           setUser(parsedUser);
         } else {
+          alert('removendo o usua´rio')
           localStorage.removeItem('user');
         }
       }

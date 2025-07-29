@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon } from 'lucide-react'
+import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from 'src/contexts/AuthContext'
@@ -89,7 +89,7 @@ export default function Sidebar({
 
           {hasAccess(['ADMIN']) && (
             <Link
-              href="/usuarios"
+              href="/cobradores"
               onClick={handleLinkClick}
               className={`
                 flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors
@@ -97,7 +97,21 @@ export default function Sidebar({
               `}
             >
               <Users size={18} />
-              Usuários
+              Cobradores
+            </Link>
+          )}
+
+          {hasAccess(['ADMIN']) && (
+            <Link
+              href="/vendedores"
+              onClick={handleLinkClick}
+              className={`
+                flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors
+                ${pathname === '/usuarios' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+              `}
+            >
+              <UserPlus size={18} />
+              Vendedores
             </Link>
           )}
 
