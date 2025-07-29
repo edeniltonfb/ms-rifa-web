@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { sha256 } from 'js-sha256';
 import { useAuth } from 'src/contexts/AuthContext';
+import { useAppContext } from 'src/contexts/AppContext';
 
 export default function LoginPage() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {loading, showLoader, hideLoader} = useAppContext();
 
   const { login: authLogin, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    showLoader();
 
     try {
       const hashedPassword = sha256(password);
@@ -32,7 +33,7 @@ export default function LoginPage() {
       setError('Ocorreu um erro durante o login');
       console.error(err);
     } finally {
-      setIsLoading(false);
+      hideLoader();
     }
   };
 
@@ -109,13 +110,13 @@ export default function LoginPage() {
           <div>
             <motion.button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               whileTap={{ scale: 0.98 }}
-              animate={isLoading ? { scale: [1, 1.05, 1], transition: { repeat: Infinity, duration: 1.2 } } : {}}
-              className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition ${isLoading ? 'opacity-80 cursor-not-allowed' : ''
+              animate={loading ? { scale: [1, 1.05, 1], transition: { repeat: Infinity, duration: 1.2 } } : {}}
+              className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition ${loading ? 'opacity-80 cursor-not-allowed' : ''
                 }`}
             >
-              {isLoading ? (
+              {loading ? (
                 <motion.div
                   className="w-5 h-5 border-2 border-t-2 border-white rounded-full animate-spin"
                   initial={{ rotate: 0 }}

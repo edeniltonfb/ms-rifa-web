@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (login: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://multisorteios.dev/msbolaoadmin/apiuniaomais/login', {
+      const response = await fetch('https://multisorteios.dev/msrifaadmin/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const response = await fetch(
-        `https://multisorteios.dev/msbolaoadmin/apiuniaomais/validatetoken?token=${token}`,
+        `https://multisorteios.dev/msrifaadmin/api/validatetoken?token=${token}`,
         {
           method: 'GET',
           headers: {
@@ -117,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     router.push('/login');
   };
 
