@@ -2,7 +2,6 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation' // Importe usePathname
-import { useAuth } from 'src/contexts/AuthContext'
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -10,12 +9,19 @@ interface HeaderProps {
 }
 
 export default function Header({ toggleSidebar }: HeaderProps) {
-  const router = useRouter(); // Mantenha se o botão de sair usa router.push
-  const { logout } = useAuth(); // Mantenha se ainda for relevante
   const pathname = usePathname(); // Obtenha o caminho da URL atual
 
   // Defina um mapeamento de rotas para títulos
   const getPageTitle = (path: string) => {
+
+    if(path.startsWith('/rifamodelo/')){
+        return 'Modelo';
+    }
+
+    if(path.startsWith('/rifa/')){
+        return 'Rifa';
+    }
+
     switch (path) {
       case '/':
         return 'Dashboard';
@@ -26,7 +32,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
       case '/clientes':
         return 'Lista de Clientes';
       default:
-        return 'Página'; // Título padrão para rotas não mapeadas
+        return 'Páginas'; // Título padrão para rotas não mapeadas
     }
   };
 
@@ -45,7 +51,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
         <h1 className="text-lg font-semibold text-white">{currentTitle}</h1>
       </div>
 
-      
+
     </header>
   );
 }
