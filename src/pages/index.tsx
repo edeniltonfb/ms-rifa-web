@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import { Card } from '@components/ui/card'
 import { useAppContext } from 'src/contexts/AppContext'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 
 interface RifaModelo {
   id: number
@@ -34,6 +35,7 @@ interface EmpresaDashboard {
 
 interface DashboardResponse {
   success: boolean
+  invalidToken: boolean
   errorMessage: string | null
   data: EmpresaDashboard[]
 }
@@ -50,10 +52,10 @@ export default function DashboardPage() {
         if (res.data.success) {
           setEmpresas(res.data.data)
         } else {
-          alert(res.data.errorMessage)
+          toast.error(res.data.errorMessage)
         }
       })
-      .catch(() => alert('Erro ao carregar dashboard'))
+      .catch(() => toast.error('Erro ao carregar dashboard'))
       .finally(() => hideLoader())
   }, [])
 

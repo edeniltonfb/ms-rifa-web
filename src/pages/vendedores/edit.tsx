@@ -7,6 +7,7 @@ import { Input } from '@components/ui/input'
 import { Button } from '@components/ui/button'
 import Link from 'next/link'
 import { useAppContext } from 'src/contexts/AppContext'
+import { toast } from 'react-toastify'
 
 interface VendedorForm {
     id?: number
@@ -51,7 +52,7 @@ export default function VendedorEditPage() {
                     setCobradores(res.data.data)
                 }
             })
-            .catch(() => alert('Erro ao carregar cobradores'))
+            .catch(() => toast.error('Erro ao carregar cobradores'))
             .finally(() => hideLoader())
     }, [])
 
@@ -63,10 +64,10 @@ export default function VendedorEditPage() {
                     if (res.data.success) {
                         setForm(res.data.data)
                     } else {
-                        alert(res.data.errorMessage)
+                        toast.error(res.data.errorMessage)
                     }
                 })
-                .catch(() => alert('Erro ao carregar vendedor'))
+                .catch(() => toast.error('Erro ao carregar vendedor'))
                 .finally(() => hideLoader())
         }
     }, [id])
@@ -103,10 +104,10 @@ export default function VendedorEditPage() {
             if (response.data.success) {
                 router.push('/vendedores')
             } else {
-                alert(response.data.errorMessage)
+                toast.error(response.data.errorMessage)
             }
         } catch (e) {
-            alert('Erro ao salvar')
+            toast.error('Erro ao salvar')
         } finally {
             hideLoader()
         }

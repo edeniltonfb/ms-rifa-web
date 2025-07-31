@@ -21,6 +21,9 @@ instance.interceptors.response.use(
       localStorage.removeItem('user')
       Router.push('/login')
     }
+    if (error.response?.status === 403) {
+      Router.push('/acessonegado')
+    }
     return Promise.reject(error)
   }
 )

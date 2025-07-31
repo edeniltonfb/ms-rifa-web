@@ -7,6 +7,7 @@ import { Input } from '@components/ui/input'
 import { Button } from '@components/ui/button'
 import Link from 'next/link'
 import { useAppContext } from 'src/contexts/AppContext'
+import { toast } from 'react-toastify'
 
 interface CobradorForm {
     id?: number
@@ -43,12 +44,12 @@ export default function CobradorEditPage() {
                     if (res.data.success) {
                         setForm(res.data.data)
                     } else {
-                        alert(res.data.errorMessage)
+                        toast.error(res.data.errorMessage)
                     }
                 })
-                .catch(() => alert('Erro ao carregar cobrador'))
+                .catch(() => toast.error('Erro ao carregar cobrador'))
                 .finally(() => hideLoader())
-            
+
         }
     }, [id])
 
@@ -83,10 +84,10 @@ export default function CobradorEditPage() {
             if (response.data.success) {
                 router.push('/cobradores')
             } else {
-                alert(response.data.errorMessage)
+                toast.error(response.data.errorMessage)
             }
         } catch (e) {
-            alert('Erro ao salvar')
+            toast.error('Erro ao salvar')
         } finally {
             hideLoader()
         }
