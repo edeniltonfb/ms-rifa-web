@@ -35,7 +35,7 @@ export default function VendedoresListPage() {
     const [page, setPage] = useState(0)
     const [size, setSize] = useState(10)
     const [data, setData] = useState<GenericPageableResponseTO<Vendedor>["data"] | null>(null)
-    const { loading, showLoader, hideLoader } = useAppContext();
+    const { showLoader, hideLoader } = useAppContext();
 
     const fetchData = async () => {
         try {
@@ -96,8 +96,8 @@ export default function VendedoresListPage() {
                         <tr>
                             <th className="text-left p-2">Nome</th>
                             <th className="text-left p-2">Login</th>
-                            <th className="text-left p-2 hidden sm:block">Comissão</th>
-                            <th className="text-left p-2 hidden sm:block">Email</th>
+                            <th className="text-left p-2">Comissão</th>
+                            <th className="text-left p-2">Email</th>
                             <th className="text-left p-2">WhatsApp</th>
                             <th className="text-left p-2">Cobrador</th>
                             <th className="text-left p-2">Status</th>
@@ -109,8 +109,8 @@ export default function VendedoresListPage() {
                             <tr key={v.id} className="border-t hover:bg-gray-100 dark:hover:bg-gray-800">
                                 <td className="p-2">{v.nome}</td>
                                 <td className="p-2">{v.login}</td>
-                                <td className="p-2 hidden sm:block">{v.comissao?.toFixed(2)}%</td>
-                                <td className="p-2 hidden sm:block">{v.email}</td>
+                                <td className="p-2">{v.comissao?.toFixed(2)}%</td>
+                                <td className="p-2">{v.email}</td>
                                 <td className="p-2">{v.whatsapp}</td>
                                 <td className="p-2">{v.cobradorNome}</td>
                                 <td className="p-2">

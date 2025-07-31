@@ -100,14 +100,14 @@ export default function CobradoresListPage() {
         <Button onClick={handleSearch}>Buscar</Button>
       </div>
 
-      <div className="overflow-x-auto border rounded shadow-sm bg-white dark:bg-gray-900">
+      <div className="overflow-x-scroll border rounded shadow-sm bg-white dark:bg-gray-900">
         <table className="min-w-full text-sm">
           <thead className="bg-gray-200 dark:bg-gray-800">
             <tr>
               <th className="text-left p-2">Nome</th>
               <th className="text-left p-2">Login</th>
-              <th className="text-left p-2 hidden sm:block">Comissão</th>
-              <th className="text-left p-2 hidden sm:block">Email</th>
+              <th className="text-left p-2 ">Comissão</th>
+              <th className="text-left p-2 ">Email</th>
               <th className="text-left p-2 ">WhatsApp</th>
               <th className="text-left p-2">Status</th>
               <th className="text-left p-2">Ações</th>
@@ -127,8 +127,8 @@ export default function CobradoresListPage() {
                 <tr key={c.id} className="border-t hover:bg-gray-100 dark:hover:bg-gray-800">
                   <td className="p-2">{c.nome}</td>
                   <td className="p-2">{c.login}</td>
-                  <td className="p-2 hidden sm:block">{c.comissao?.toFixed(2)}%</td>
-                  <td className="p-2 hidden sm:block">{c.email}</td>
+                  <td className="p-2">{c.comissao?.toFixed(2)}%</td>
+                  <td className="p-2">{c.email}</td>
                   <td className="p-2">{c.whatsapp}</td>
                   <td className="p-2">
                     <span

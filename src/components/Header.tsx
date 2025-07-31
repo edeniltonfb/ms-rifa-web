@@ -14,11 +14,11 @@ export default function Header({ toggleSidebar }: HeaderProps) {
   // Defina um mapeamento de rotas para títulos
   const getPageTitle = (path: string) => {
 
-    if(path.startsWith('/rifamodelo/')){
+    if(path?.startsWith('/rifamodelo/')){
         return 'Modelo';
     }
 
-    if(path.startsWith('/rifa/')){
+    if(path?.startsWith('/rifa/')){
         return 'Rifa';
     }
 

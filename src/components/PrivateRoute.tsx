@@ -5,7 +5,7 @@ import { useAppContext } from 'src/contexts/AppContext'
 
 export default function PrivateRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { loading, hideLoader } = useAppContext();
+  const { hideLoader } = useAppContext();
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -15,8 +15,6 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
       hideLoader()
     }
   }, [router])
-
-  if (loading) return null
 
   return <>{children}</>
 }

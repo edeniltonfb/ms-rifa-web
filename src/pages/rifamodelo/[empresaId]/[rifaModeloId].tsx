@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import instance from '@lib/axios'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@components/ui/tabs'
-import { Card, CardContent } from '@components/ui/card'
-import { Input } from '@components/ui/input'
-import Select, { ActionMeta, SingleValue, StylesConfig } from 'react-select'
+import { Card } from '@components/ui/card'
 import { toast } from 'react-toastify'
 import { cn } from 'src/utils/cn'
 import { useAppContext } from 'src/contexts/AppContext'
+import CadastroTab from '@components/serva/CadastroTab'
+import ConsultaTab from '@components/serva/ConsultaTab'
 
 
 interface RifaModelo {
@@ -20,32 +20,11 @@ interface RifaModelo {
     quantidadeDigitos: number
 }
 
-interface ConsultaResponse {
-    numero: string
-    cadastrada: boolean
-    vendedor: string
-}
-
-interface Serva {
-    rifaModeloId: number
-    numero: string
-}
-
-interface IdLabel {
-    id: number
-    label: string
-}
-
 export default function RifaModeloPage() {
     const router = useRouter()
     const { empresaId, rifaModeloId } = router.query
 
     const [rifaModelo, setRifaModelo] = useState<RifaModelo | null>(null)
-    const [numero, setNumero] = useState('')
-    const [resultadoConsulta, setResultadoConsulta] = useState<ConsultaResponse | null>(null)
-    const [vendedores, setVendedores] = useState<IdLabel[]>([])
-    const [vendedorSelecionado, setVendedorSelecionado] = useState<IdLabel | null>(null)
-    const [servas, setServas] = useState<Serva[]>([])
     const [activeTab, setActiveTab] = useState<string>('consulta')
     const { showLoader, hideLoader } = useAppContext();
 
@@ -59,82 +38,7 @@ export default function RifaModeloPage() {
             }).finally(() => hideLoader())
     }, [rifaModeloId])
 
-    useEffect(() => {
-        showLoader();
-        instance.get('/listarvendedoridlabel')
-            .then(res => {
-                if (res.data.success) setVendedores(res.data.data)
-                else toast.error(res.data.errorMessage)
-            }).finally(() => hideLoader())
-    }, [])
-
-    const handleNumeroChange = (value: string) => {
-        const clean = value.replace(/\D/g, '').slice(0, rifaModelo?.quantidadeDigitos || 4)
-        setNumero(clean)
-    }
-
-    const consultarNumero = async () => {
-        const quantidadeDigitos = rifaModelo?.quantidadeDigitos ?? 4;
-
-        if (rifaModelo && numero.length === quantidadeDigitos) {
-            showLoader();
-            setServas([]);
-            setVendedorSelecionado(null);
-            await instance.get(`/consultarserva?empresaId=${empresaId}&rifaModeloId=${rifaModeloId}&numero=${numero}`)
-                .then(res => {
-                    if (res.data.success) setResultadoConsulta(res.data.data)
-                    else toast.error(res.data.errorMessage)
-                }).finally(() => hideLoader())
-        } else {
-            setResultadoConsulta(null)
-            toast.error('Número inválido')
-        }
-    }
-
-    const handleVendedorChange = (v: IdLabel | null) => {
-        setVendedorSelecionado(v)
-        setServas([])
-        if (v) {
-            fetchServasByVendedor(v.id);
-        }
-    }
-
-    const fetchServasByVendedor = async (cambistaId: number) => {
-        showLoader();
-        setResultadoConsulta(null);
-        setNumero('')
-        instance.get(`/listarservas?empresaId=${empresaId}&rifaModeloId=${rifaModeloId}&cambistaId=${cambistaId}`)
-            .then(res => {
-                if (res.data.success) setServas(res.data.data)
-                else toast.error(res.data.errorMessage)
-            }).finally(() => hideLoader())
-    }
-
-    const handleRemoverNumero = async (numero: string) => {
-        if (!vendedorSelecionado) return;
-
-        try {
-            const response = await instance.delete('/removerserva', {
-                params: {
-                    empresaId: 1,
-                    rifaModeloId,
-                    numero,
-                },
-            });
-
-            if (response.data.success) {
-                toast.success(`Número ${numero} removido com sucesso`);
-                // Recarrega a lista de números
-                await fetchServasByVendedor(vendedorSelecionado?.id);
-            } else {
-                toast.error(response.data.errorMessage || 'Erro ao remover número');
-            }
-        } catch (error) {
-            toast.error('Erro na exclusão');
-            console.error(error);
-        }
-    };
-
+    if (rifaModelo == null) return null;
 
     return (
         <div >
@@ -190,77 +94,11 @@ export default function RifaModeloPage() {
                 </TabsList>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="consulta">
-                    <div className="flex flex-wrap gap-4">
-                        <Input
-                            className='text-xl w-[100px] text-center text-bold p-1'
-                            placeholder={`${rifaModelo?.quantidadeDigitos || 4} dígitos`}
-                            value={numero}
-                            onChange={(e) => handleNumeroChange(e.target.value)}
-                            maxLength={rifaModelo?.quantidadeDigitos || 4}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    consultarNumero()
-                                }
-                            }}
-                        />
-
-                        <Select<IdLabel, false>
-                            placeholder="Selecione um vendedor"
-                            options={vendedores}
-                            value={vendedorSelecionado}
-                            onChange={(v: SingleValue<IdLabel>, actionMeta: ActionMeta<IdLabel>) =>
-                                handleVendedorChange(v as IdLabel)
-                            }
-                            isClearable
-                            classNames={{
-                                control: () => 'dark:bg-gray-900',
-                                menu: () => 'z-50 max-h-48 overflow-y-auto',
-                                singleValue: () => 'dark:text-white',
-                                input: () => 'dark:text-white',
-                                placeholder: () => 'dark:text-white',
-                            }}
-                        />
-                    </div>
-
-                    {resultadoConsulta && (
-                        <div className="mt-4 p-4 border rounded shadow bg-white dark:bg-gray-900">
-                            <p><strong>Número:</strong> {resultadoConsulta.numero}</p>
-                            <p><strong>Status:</strong> {resultadoConsulta.cadastrada ? 'Cadastrado' : 'Disponível'}</p>
-                            <p><strong>Vendedor:</strong> {resultadoConsulta.vendedor}</p>
-                        </div>
-                    )}
-
-                    {servas.length > 0 && (
-                        <div className="mt-6">
-                            <h2 className="text-lg font-semibold mb-2">Números do vendedor</h2>
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                {servas.map((s, idx) => (
-                                    <Card
-                                        key={idx}
-                                        className="relative flex flex-col w-[100px] h-[60px] items-center justify-center"
-                                    >
-                                        {/* Botão de excluir */}
-                                        <button
-                                            className="absolute top-1 right-1 text-red-500 hover:text-red-700"
-                                            onClick={() => handleRemoverNumero(s.numero)}
-                                            title="Remover número"
-                                        >
-                                            ×
-                                        </button>
-
-                                        <CardContent className="text-center font-mono font-bold text-xl">
-                                            {s.numero}
-                                        </CardContent>
-                                    </Card>
-
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    <ConsultaTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} rifaModelo={rifaModelo!} />
                 </TabsContent>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="cadastro">
-                    <p>Cadastro individual (a implementar)</p>
+                    <CadastroTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} />
                 </TabsContent>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="lote">
