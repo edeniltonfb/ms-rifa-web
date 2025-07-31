@@ -7,12 +7,12 @@ import { toast } from 'react-toastify'
 import Select, { ActionMeta, SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
+import { IdLabel, RifaModelo, Serva } from '@common/data'
 
-interface RifaModelo {
-    id: number
-    tipo: string
-    descricao: string
-    quantidadeServas: number
+
+interface ConsultaTabProps {
+    empresaId: number
+    rifaModeloId: number
     quantidadeDigitos: number
 }
 
@@ -22,24 +22,7 @@ interface ConsultaResponse {
     vendedor: string
 }
 
-interface Serva {
-    rifaModeloId: number
-    numero: string
-}
-
-interface IdLabel {
-    id: number
-    label: string
-}
-
-interface ConsultaTabProps {
-    empresaId: number
-    rifaModeloId: number
-    quantidadeDigitos: number
-    rifaModelo: RifaModelo
-}
-
-export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos, rifaModelo }: ConsultaTabProps) {
+export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos }: ConsultaTabProps) {
 
     const [numero, setNumero] = useState('')
     const [resultadoConsulta, setResultadoConsulta] = useState<ConsultaResponse | null>(null)
@@ -47,8 +30,8 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
     const [vendedorSelecionado, setVendedorSelecionado] = useState<IdLabel | null>(null)
     const [servas, setServas] = useState<Serva[]>([])
     const { showLoader, hideLoader } = useAppContext();
-    
-    
+
+
     useEffect(() => {
         showLoader();
         instance.get('/listarvendedoridlabel')
@@ -59,14 +42,13 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
     }, [])
 
     const handleNumeroChange = (value: string) => {
-        const clean = value.replace(/\D/g, '').slice(0, rifaModelo?.quantidadeDigitos || 4)
+        const clean = value.replace(/\D/g, '').slice(0, quantidadeDigitos || 4)
         setNumero(clean)
     }
 
     const consultarNumero = async () => {
-        const quantidadeDigitos = rifaModelo?.quantidadeDigitos ?? 4;
 
-        if (rifaModelo && numero.length === quantidadeDigitos) {
+        if (quantidadeDigitos && numero.length === quantidadeDigitos) {
             showLoader();
             setServas([]);
             setVendedorSelecionado(null);
@@ -130,10 +112,10 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
             <div className="flex flex-wrap gap-4">
                 <Input
                     className='text-xl w-[100px] text-center text-bold p-1'
-                    placeholder={`${rifaModelo?.quantidadeDigitos || 4} dígitos`}
+                    placeholder={`${quantidadeDigitos || 4} dígitos`}
                     value={numero}
                     onChange={(e) => handleNumeroChange(e.target.value)}
-                    maxLength={rifaModelo?.quantidadeDigitos || 4}
+                    maxLength={quantidadeDigitos || 4}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             consultarNumero()

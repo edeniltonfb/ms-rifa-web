@@ -94,7 +94,7 @@ export default function RifaModeloPage() {
                 </TabsList>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="consulta">
-                    <ConsultaTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} rifaModelo={rifaModelo!} />
+                    <ConsultaTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} />
                 </TabsContent>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="cadastro">

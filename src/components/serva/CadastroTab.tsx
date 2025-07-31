@@ -6,18 +6,8 @@ import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
 import Select from 'react-select'
 import instance from '@lib/axios'
-import { Button } from '@components/ui/button'
 import { useAppContext } from 'src/contexts/AppContext'
-
-interface IdLabel {
-    id: number
-    label: string
-}
-
-interface Serva {
-    rifaModeloId: number
-    numero: string
-}
+import { IdLabel, Serva } from '@common/data'
 
 interface ResultadoCadastro {
     numero: string

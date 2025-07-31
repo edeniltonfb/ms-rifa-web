@@ -4,82 +4,25 @@ export interface ApiResult {
     data?: any;
 }
 
-export interface Sorteio {
-    id: number;
-    dataSorteio: string;
-    situacaoId: number;
-    situacao: string;
-    valorBilhete: number;
-    titulo: string;
-    tipo: string;
-    subtipo: string;
-    horario: string;
-    imageUrl: string;
-    premiacaoList: Premiacao[];
-    sorteio?: number;
+export interface RifaModelo {
+    id: number
+    tipo: string
+    descricao: string
+    quantidadeServas: number
+    quantidadeDigitos: number
 }
 
-export interface ApostaPremiada {
-    bilheteId: number;
-    bolaoId: number;
-    sequencial: number;
-    valorPremio: string;
-    tipo: string;
-    nome: string;
-    telefone: string;
-    cidade: string;
-    rota: string;
-    cambista: string;
-    dataHoraCompra: string;
+export interface Serva {
+    rifaModeloId: number
+    numero: string
 }
 
-export interface ClienteData {
-    nome: string;
-    telefone: string;
-    cidade: string;
-}
-
-export interface Arquivo {
-    sequencial: number;
-    descricao: string;
-    tipo: string;
-    link: string;
-    linkClassificacao: string;
-    atualizacaoDataHora: string;
-}
-
-export interface Aposta {
-    bilheteId: number;
-    nome: string;
-    telefone?:string;
-    cidade?:string;
-    dataHora: string;
-    quantidade: number;
-    valor: number;
-    link?: string;
-    numeros: string[];
-}
-
-export interface Extrato {
-    vendasRealizadas: number;
-    apostasRegistradas: number;
-    arrecadacao: number;
-    comissao: number;
-    valorLiquido: number;
-    apostas: Aposta[];
-}
-
-export interface Importacao {
-    id: number;
-    cambista: string;
-    quantidade: number;
-    atualizacaoDataHora: string;
-    apostas: Aposta[];
+export interface IdLabel {
+    id: number
+    label: string
 }
 
 export interface AppContextType {
-    sorteio: Sorteio | null;
-    setSorteio: (sorteio: Sorteio | null) => void;
 
     loading: boolean;
     showLoader: () => void;
