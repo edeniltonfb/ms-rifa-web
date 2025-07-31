@@ -11,6 +11,7 @@ import { useAppContext } from 'src/contexts/AppContext'
 import CadastroTab from '@components/serva/CadastroTab'
 import ConsultaTab from '@components/serva/ConsultaTab'
 import CadastroLoteTab from '@components/serva/CadastroLoteTab'
+import CadastrarRifaTab from '@components/serva/CadastrarRifaTab'
 
 
 interface RifaModelo {
@@ -87,11 +88,11 @@ export default function RifaModeloPage() {
                         value="lote">Lote</TabsTrigger>
                     <TabsTrigger className={cn(
                         'px-2 py-2 text-sm font-medium border-b-2 transition-all',
-                        activeTab === 'naoCadastradas'
+                        activeTab === 'cadastrarRifa'
                             ? 'border-primary text-primary bg-white dark:bg-gray-800'
                             : 'border-transparent text-muted-foreground hover:text-primary hover:border-gray-300'
                     )}
-                        value="naoCadastradas">Não cadastradas</TabsTrigger>
+                        value="cadastrarRifa">Cadastrar Rifa</TabsTrigger>
                 </TabsList>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="consulta">
@@ -106,8 +107,8 @@ export default function RifaModeloPage() {
                     <CadastroLoteTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} />
                 </TabsContent>
 
-                <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="naoCadastradas">
-                    <p>Números não cadastrados (a implementar)</p>
+                <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="cadastrarRifa">
+                    <CadastrarRifaTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} />
                 </TabsContent>
             </Tabs>
         </div>
