@@ -10,6 +10,7 @@ import { cn } from 'src/utils/cn'
 import { useAppContext } from 'src/contexts/AppContext'
 import CadastroTab from '@components/serva/CadastroTab'
 import ConsultaTab from '@components/serva/ConsultaTab'
+import CadastroLoteTab from '@components/serva/CadastroLoteTab'
 
 
 interface RifaModelo {
@@ -102,7 +103,7 @@ export default function RifaModeloPage() {
                 </TabsContent>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="lote">
-                    <p>Cadastro em lote (a implementar)</p>
+                    <CadastroLoteTab empresaId={parseInt(`${empresaId}`)} rifaModeloId={rifaModelo?.id!} quantidadeDigitos={rifaModelo?.quantidadeDigitos ?? 4} />
                 </TabsContent>
 
                 <TabsContent className='border-2 border-[#6C5FFC] rounded-md p-4 mt-[-1px]' value="naoCadastradas">

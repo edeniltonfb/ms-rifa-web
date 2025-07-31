@@ -28,6 +28,8 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
     const [servas, setServas] = useState<Serva[]>([])
     const [resultado, setResultado] = useState<ResultadoCadastro | null>(null)
     const { showLoader, hideLoader } = useAppContext()
+    const [showResultPanel, setShowResultPanel] = useState(false)
+    const [sucesso, setSucesso] = useState(false)
 
     useEffect(() => {
         const fetchVendedores = async () => {
@@ -60,6 +62,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
         setVendedorSelecionado(v)
         setServas([])
         setResultado(null)
+        setShowResultPanel(false)
         if (v) fetchServas(v.id)
     }
 
@@ -71,11 +74,14 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
             const res = await instance.post(
                 `/cadastrarserva?empresaId=${empresaId}&rifaModeloId=${rifaModeloId}&numero=${numero}&cambistaId=${vendedorSelecionado.id}`
             )
-            if (res.data.success) {
-                setResultado(res.data.data)
+            setResultado(res.data.data)
+            setShowResultPanel(true)
+            if (res.data.data.sucesso) {
+                setSucesso(true)
                 fetchServas(vendedorSelecionado.id)
             } else {
-                toast.error(res.data.errorMessage)
+                setSucesso(false)
+                toast.error(res.data.data.mensagem)
             }
         } catch {
             toast.error('Erro ao cadastrar número')
@@ -93,6 +99,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
             )
             if (res.data.success) {
                 toast.success('Número removido com sucesso')
+                setShowResultPanel(false)
                 if (vendedorSelecionado) fetchServas(vendedorSelecionado.id)
             } else {
                 toast.error(res.data.errorMessage)
@@ -117,14 +124,14 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap gap-4">
                 <Input
                     placeholder={`Digite ${quantidadeDigitos} dígitos`}
                     value={numero}
                     onChange={(e: any) => handleChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     maxLength={quantidadeDigitos}
-                    className="text-xl font-mono"
+                    className='text-xl w-[100px] text-center text-bold p-1'
                 />
 
                 <Select
@@ -142,26 +149,33 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
                 />
             </div>
 
-            {resultado && (
-                <Card className="border border-gray-300 dark:border-gray-700">
+            {showResultPanel && (
+                <Card className={sucesso ? 'relative flex flex-col border border-green-300 bg-green-200 w-[300px]' : 'relative flex flex-col border border-red-300 bg-red-200 w-[300px]'}>
+                    {/* Botão de excluir */}
+                    <button
+                        className="absolute top-0 right-1 text-red-500 hover:text-red-700"
+                        onClick={() => handleRemoverNumero(resultado?.numero!)}
+                        title="Remover número"
+                    >
+                        ×
+                    </button>
                     <CardContent className="p-4">
-                        <p className="text-lg font-medium">Número: <span className="font-mono text-xl">{resultado.numero}</span></p>
-                        <p>Status: {resultado.cadastrada ? 'Cadastrado' : 'Não cadastrado'}</p>
-                        <p>Vendedor: {resultado.vendedor}</p>
+                        <p className="text-lg font-medium">Número: <span className="font-mono text-xl">{resultado?.numero}</span></p>
+                        <p>Vendedor: {resultado?.vendedor}</p>
                     </CardContent>
                 </Card>
             )}
 
             {servas.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                     {servas.map((s, idx) => (
                         <Card
                             key={idx}
-                            className="relative flex flex-col w-[100px] h-[60px] items-center justify-center"
+                            className="relative flex flex-col w-min h-[50px] items-center justify-center"
                         >
                             {/* Botão de excluir */}
                             <button
-                                className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+                                className="absolute top-0 right-1 text-red-500 hover:text-red-700"
                                 onClick={() => handleRemoverNumero(s.numero)}
                                 title="Remover número"
                             >

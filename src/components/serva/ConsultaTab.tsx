@@ -152,15 +152,15 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
             {servas.length > 0 && (
                 <div className="mt-6">
                     <h2 className="text-lg font-semibold mb-2">Números do vendedor</h2>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="flex flex-wrap gap-2 mt-2">
                         {servas.map((s, idx) => (
                             <Card
                                 key={idx}
-                                className="relative flex flex-col w-[100px] h-[60px] items-center justify-center"
+                                className="relative flex flex-col w-min h-[50px] items-center justify-center"
                             >
                                 {/* Botão de excluir */}
                                 <button
-                                    className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-1 text-red-500 hover:text-red-700"
                                     onClick={() => handleRemoverNumero(s.numero)}
                                     title="Remover número"
                                 >
