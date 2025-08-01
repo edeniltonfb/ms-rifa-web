@@ -9,6 +9,8 @@ import { toast } from 'react-toastify'
 import CustomSelect from '@components/CustomCombobox'
 import { Separator } from '@components/ui/separator'
 import { useRouter } from 'next/router'
+import { SingleValue } from 'react-select'
+import { useAppContext } from 'src/contexts/AppContext'
 
 interface RifaInfo {
     cliente: string
@@ -35,20 +37,30 @@ export default function RifaPage() {
 
     const [info, setInfo] = useState<RifaInfo | null>(null)
     const [vendedores, setVendedores] = useState<IdLabel[]>([])
+    const [taloes, setTaloes] = useState<IdLabel[]>([])
     const [vendedorSelecionado, setVendedorSelecionado] = useState<IdLabel | null>(null)
-    const [talaoSelecionado, setTalaoSelecionado] = useState<string>('')
+    const [talaoSelecionado, setTalaoSelecionado] = useState<IdLabel | null>(null)
     const [numero, setNumero] = useState('')
+    const { showLoader, hideLoader } = useAppContext()
 
     useEffect(() => {
-        /*instance.get('/buscarrifa?empresaId=1&rifaId=1').then(res => {
-          if (res.data.success) setInfo(res.data.data)
-          else toast.error(res.data.errorMessage)
-        })*/
 
-        instance.get('/listarvendedoridlabel').then(res => {
-            if (res.data.success) setVendedores(res.data.data)
-        })
-    }, [])
+        if (rifaId && empresaId) {
+
+            instance.get(`/buscarrifa?empresaId=${empresaId}&rifaId=${rifaId}`).then(res => {
+                if (res.data.success) setInfo(res.data.data)
+                else toast.error(res.data.errorMessage)
+            })
+
+            instance.get('/listarvendedoridlabel').then(res => {
+                if (res.data.success) setVendedores(res.data.data)
+            })
+
+            instance.get(`/listartalaoidlabel?rifaId=${rifaId}`).then(res => {
+                if (res.data.success) setTaloes(res.data.data)
+            })
+        }
+    }, [rifaId, empresaId])
 
     const handleFiltrar = () => {
         const params: any = {
@@ -62,6 +74,42 @@ export default function RifaPage() {
             if (!res.data.success) toast.error(res.data.errorMessage)
             else console.log(res.data.data) // TODO: renderizar os resultados
         })
+    }
+
+    type FetchBilhetesProps = {
+        cambistaId?: number;
+        talaoId?: number;
+        numero?: string;
+    };
+
+    const fetchBilhetes = async ({ cambistaId, talaoId, numero }: FetchBilhetesProps) => {
+        showLoader()
+        try {
+            const res = await instance.get('/listarbilhetes', {
+                params: { empresaId, rifaId, cambistaId, talaoId, numero },
+            })
+            if (res.data.success) {
+                console.log(res.data.data)
+            } else {
+                toast.error(res.data.errorMessage)
+            }
+        } catch {
+            toast.error('Erro ao buscar servas')
+        } finally {
+            hideLoader()
+        }
+    }
+
+    const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+        setVendedorSelecionado(v as SingleValue<IdLabel>)
+
+        if (v) fetchBilhetes({ cambistaId: (v as SingleValue<IdLabel>)!.id })
+    }
+
+    const handleTalaoChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+        setTalaoSelecionado(v as SingleValue<IdLabel>)
+
+        if (v) fetchBilhetes({ talaoId: (v as SingleValue<IdLabel>)!.id })
     }
 
     //if (!info) return <div>Carregando...</div>
@@ -100,19 +148,19 @@ export default function RifaPage() {
                 <CustomSelect<IdLabel>
                     options={vendedores}
                     value={vendedorSelecionado}
-                    onChange={(v) => setVendedorSelecionado(v as IdLabel)}
+                    onChange={(v) => handleVendedorChange(v)}
                     isMulti={false}
-                    placeholder="Talão"
+                    placeholder="Vendedor"
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => String(option.id)}
                 />
 
                 <CustomSelect<IdLabel>
-                    options={vendedores}
-                    value={vendedorSelecionado}
-                    onChange={() => { }}
+                    options={taloes}
+                    value={talaoSelecionado}
+                    onChange={(t) => handleTalaoChange(t)}
                     isMulti={false}
-                    placeholder="Vendedor"
+                    placeholder="Talão"
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => String(option.id)}
                 />

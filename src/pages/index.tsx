@@ -107,10 +107,12 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {empresa.rifaList.map((rifa) => (
                     <Card key={rifa.id} className="p-4">
-                      <h3 className="text-lg font-semibold">Modalidade: {rifa.modalidadeVenda}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Data: {rifa.dataSorteio}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Qtd. Números: {rifa.quantidadeNumeros}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Números por Bilhete: {rifa.quantidadeNumerosPorBilhete}</p>
+                      <Link href={`/rifa/${empresa.empresaId}/${rifa.id}`}>
+                        <h3 className="text-lg font-semibold">Modalidade: {rifa.modalidadeVenda}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Data: {rifa.dataSorteio}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Qtd. Números: {rifa.quantidadeNumeros}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Números por Bilhete: {rifa.quantidadeNumerosPorBilhete}</p>
+                      </Link>
                     </Card>
                   ))}
                 </div>
