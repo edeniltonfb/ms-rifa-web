@@ -64,13 +64,14 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
         }
     }
 
-    const handleVendedorChange = (v: IdLabel | null) => {
-        setVendedorSelecionado(v)
+    const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+        setVendedorSelecionado(v as IdLabel)
         setServas([])
         if (v) {
-            fetchServasByVendedor(v.id);
+            fetchServasByVendedor((v as IdLabel).id);
         }
     }
+
 
     const fetchServasByVendedor = async (cambistaId: number) => {
         showLoader();
@@ -128,6 +129,7 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                     options={vendedores}
                     value={vendedorSelecionado}
                     onChange={handleVendedorChange}
+                    isMulti={false}
                     placeholder="Selecione um vendedor"
                     getOptionLabel={(option) => option.label}
                     getOptionValue={(option) => String(option.id)}

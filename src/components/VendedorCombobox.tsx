@@ -6,21 +6,22 @@ import Select, { SingleValue, ActionMeta } from 'react-select';
 // Definindo os tipos para as props do componente
 interface CustomSelectProps<T> {
     options: T[];
-    value: SingleValue<T>;
-    onChange: (value: SingleValue<T>) => void;
+    value: SingleValue<T> | T[] | null; // Adicionado array de T e null
+    onChange: (value: SingleValue<T> | T[] | null) => void; // Adicionado array de T e null
     placeholder?: string;
     isClearable?: boolean;
+    isMulti?: boolean; // Adicionado a prop isMulti
     getOptionLabel: (option: T) => string;
     getOptionValue: (option: T) => string;
 }
 
-// O componente usa um tipo genérico <T> para ser flexível
 const CustomSelect = <T,>({
     options,
     value,
     onChange,
     placeholder = 'Selecione...',
     isClearable = true,
+    isMulti = false, // Valor padrão para seleção simples
     getOptionLabel,
     getOptionValue,
 }: CustomSelectProps<T>) => {
@@ -29,8 +30,9 @@ const CustomSelect = <T,>({
             placeholder={placeholder}
             options={options}
             value={value}
-            onChange={(v: SingleValue<T>) => onChange(v)}
+            onChange={(v: SingleValue<T> | T[] | null) => onChange(v as SingleValue<T> | T[] | null)}
             isClearable={isClearable}
+            isMulti={isMulti} // Passando a prop para o react-select
             getOptionLabel={getOptionLabel}
             getOptionValue={getOptionValue}
             classNames={{
@@ -46,6 +48,9 @@ const CustomSelect = <T,>({
                             ? 'dark:bg-indigo-500 dark:text-white bg-indigo-500 text-white'
                             : 'dark:bg-gray-800 dark:text-white bg-white',
                 singleValue: () => 'dark:text-white',
+                multiValue: () => 'dark:bg-gray-700 dark:text-white bg-gray-200 text-gray-800 rounded-md',
+                multiValueLabel: () => 'dark:text-white text-gray-800',
+                multiValueRemove: () => 'dark:hover:bg-gray-600 hover:bg-gray-300',
                 input: () => 'dark:text-white',
                 placeholder: () => 'dark:text-gray-400 text-gray-500',
             }}
