@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
 import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
-import Select from 'react-select'
+import { SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, Serva } from '@common/data'
+import CustomSelect from '@components/CustomCombobox'
 
 interface ResultadoCadastro {
     numero: string
@@ -58,13 +59,15 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
         }
     }
 
-    const handleVendedorChange = (v: IdLabel | null) => {
-        setVendedorSelecionado(v)
+    const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+        setVendedorSelecionado(v as SingleValue<IdLabel>)
         setServas([])
         setResultado(null)
         setShowResultPanel(false)
-        if (v) fetchServas(v.id)
+        if (v) fetchServas((v as SingleValue<IdLabel>)!.id)
     }
+
+    
 
     const handleSubmit = async () => {
         if (numero.length !== quantidadeDigitos || !vendedorSelecionado) return
@@ -126,7 +129,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
         <div className="space-y-6">
             <div className="flex flex-wrap gap-4">
                 <Input
-                    placeholder={`Digite ${quantidadeDigitos} dígitos`}
+                    placeholder={`${quantidadeDigitos} dígitos`}
                     value={numero}
                     onChange={(e: any) => handleChange(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -134,19 +137,16 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
                     className='text-xl w-[100px] text-center text-bold p-1'
                 />
 
-                <Select
-                    placeholder="Selecione um vendedor"
+                <CustomSelect<IdLabel>
                     options={vendedores}
                     value={vendedorSelecionado}
-                    onChange={(v: IdLabel) => handleVendedorChange(v as IdLabel)}
-                    classNames={{
-                        control: () => 'dark:bg-gray-900',
-                        menu: () => 'z-50 max-h-48 overflow-y-auto',
-                        singleValue: () => 'dark:text-white',
-                        input: () => 'dark:text-white',
-                    }}
-                    isClearable
+                    onChange={handleVendedorChange}
+                    isMulti={false}
+                    placeholder="Selecione um vendedor"
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => String(option.id)}
                 />
+
             </div>
 
             {showResultPanel && (

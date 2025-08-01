@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
 import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
-import Select from 'react-select'
+import { SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel } from '@common/data'
+import CustomSelect from '@components/CustomCombobox'
 
 
 interface CadastroLoteResultado {
@@ -101,34 +102,31 @@ export default function CadastroLoteTab({ empresaId, rifaModeloId, quantidadeDig
 
     return (
         <div className="space-y-4">
-            <Select
-                placeholder="Selecione um vendedor"
-                options={vendedores}
-                value={vendedorSelecionado}
-                onChange={(v: IdLabel) => setVendedorSelecionado(v as IdLabel)}
-                classNames={{
-                    control: () => 'dark:bg-gray-900',
-                    menu: () => 'z-50 max-h-48 overflow-y-auto',
-                    singleValue: () => 'dark:text-white',
-                    input: () => 'dark:text-white',
-                }}
-                isClearable
-            />
-
-            <div className="flex flex-wrap gap-2">
-                <Input
-                    placeholder={`Digite ${quantidadeDigitos} dígitos e pressione Enter`}
-                    className="text-xl font-mono w-full sm:w-auto"
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault()
-                            handleAddNumero((e.target as HTMLInputElement).value)
-                                ; (e.target as HTMLInputElement).value = ''
-                        }
-                    }}
+            <div className="flex flex-col gap-4 w-[250px]">
+                <CustomSelect<IdLabel>
+                    options={vendedores}
+                    value={vendedorSelecionado}
+                    onChange={(v: any) => setVendedorSelecionado(v as SingleValue<IdLabel>)}
+                    isMulti={false}
+                    placeholder="Selecione um vendedor"
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => String(option.id)}
                 />
-            </div>
+                
 
+
+                    <Input
+                        placeholder={`Digite e <Enter>`}
+                        className="text-xl font-mono w-full sm:w-auto"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault()
+                                handleAddNumero((e.target as HTMLInputElement).value)
+                                    ; (e.target as HTMLInputElement).value = ''
+                            }
+                        }}
+                    />
+            </div>
             <div className="flex flex-wrap gap-2">
                 {numeros.map((n, i) => (
                     <span
@@ -139,6 +137,20 @@ export default function CadastroLoteTab({ empresaId, rifaModeloId, quantidadeDig
                         {n} ✕
                     </span>
                 ))}
+            </div>
+
+            
+
+            <div className="flex gap-2 flex-wrap">
+                <button onClick={handleRemoverInvalidos} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Remover inválidos
+                </button>
+                <button onClick={handlePaste} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Colar Texto...
+                </button>
+                <button onClick={handleLimpar} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Limpar
+                </button>
             </div>
 
             <div className="flex gap-2 flex-wrap">
@@ -153,18 +165,6 @@ export default function CadastroLoteTab({ empresaId, rifaModeloId, quantidadeDig
 
                 <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Inserir Lote
-                </button>
-            </div>
-
-            <div className="flex gap-2 flex-wrap">
-                <button onClick={handleRemoverInvalidos} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Remover inválidos
-                </button>
-                <button onClick={handlePaste} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Colar Texto...
-                </button>
-                <button onClick={handleLimpar} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Limpar
                 </button>
             </div>
 

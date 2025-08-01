@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
-import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
 import Select from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { Button } from '@components/ui/button'
+import CustomSelect from '@components/CustomCombobox'
 
 interface IdLabel {
     id: number
@@ -40,7 +40,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
             const res = await instance.get('/listarvendedoridlabel')
             if (res.data.success) {
                 setCambistaList(res.data.data)
-                setCambistasSelecionados(res.data.data) // seleciona todos automaticamente
+                //setCambistasSelecionados(res.data.data) // seleciona todos automaticamente
             } else {
                 toast.error(res.data.errorMessage)
             }
@@ -91,69 +91,60 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Select
-                placeholder="Modalidade de Venda"
-                options={modalidadeOptions}
-                value={modalidadeVenda}
-                onChange={(v: any) => setModalidadeVenda(v)}
-                classNames={{
-                    control: () => 'dark:bg-gray-900',
-                    singleValue: () => 'dark:text-white',
-                    input: () => 'dark:text-white',
-                }}
-            />
+        <div className='space-y-3'>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Select
+                    placeholder="Modalidade de Venda"
+                    options={modalidadeOptions}
+                    value={modalidadeVenda}
+                    onChange={(v: any) => setModalidadeVenda(v)}
+                    classNames={{
+                        control: () => 'dark:bg-gray-900',
+                        singleValue: () => 'dark:text-white',
+                        input: () => 'dark:text-white',
+                    }}
+                />
 
-            <Input
-                type="date"
-                value={dataSorteio}
-                onChange={(e: any) => setDataSorteio(e.target.value)}
-            />
+                <Input
+                    type="date"
+                    value={dataSorteio}
+                    onChange={(e: any) => setDataSorteio(e.target.value)}
+                />
 
-            <Input
-                type="number"
-                placeholder="Quantidade de Números"
-                value={quantidadeNumeros}
-                onChange={(e: any) => setQuantidadeNumeros(e.target.value)}
-            />
+                <Input
+                    type="number"
+                    placeholder="Quantidade de Números"
+                    value={quantidadeNumeros}
+                    onChange={(e: any) => setQuantidadeNumeros(e.target.value)}
+                />
 
-            <Input
-                type="number"
-                placeholder="Bilhetes por Talão"
-                value={quantidadeBilhetesTalao}
-                onChange={(e: any) => setQuantidadeBilhetesTalao(e.target.value)}
-            />
+                <Input
+                    type="number"
+                    placeholder="Bilhetes por Talão"
+                    value={quantidadeBilhetesTalao}
+                    onChange={(e: any) => setQuantidadeBilhetesTalao(e.target.value)}
+                />
 
-            <Input
-                type="number"
-                placeholder="Números por Bilhete"
-                value={quantidadeNumerosPorBilhete}
-                onChange={(e: any) => setQuantidadeNumerosPorBilhete(e.target.value)}
-            />
+                <Input
+                    type="number"
+                    placeholder="Números por Bilhete"
+                    value={quantidadeNumerosPorBilhete}
+                    onChange={(e: any) => setQuantidadeNumerosPorBilhete(e.target.value)}
+                />
 
-            <Select
-                placeholder="Selecione Cambistas"
-                options={cambistaList}
-                value={cambistasSelecionados}
-                onChange={(v: any) => setCambistasSelecionados(v as IdLabel[])}
-                isMulti
-                getOptionLabel={(e: any) => e.label}
-                getOptionValue={(e: any) => e.id.toString()}
-                classNames={{
-                    control: () => 'dark:bg-gray-900',
-                    menu: () => 'dark:bg-gray-900',
-                    option: ({ isFocused, isSelected }: any) =>
-                        `dark:text-white ${isFocused ? 'bg-gray-700' : ''} ${isSelected ? 'bg-blue-600 text-white' : ''}`,
-                    multiValue: () => 'bg-blue-500 dark:bg-blue-700',
-                    multiValueLabel: () => 'text-white',
-                    multiValueRemove: () => 'text-white hover:text-red-300',
-                    input: () => 'dark:text-white',
-                    placeholder: () => 'dark:text-white',
-                    singleValue: () => 'dark:text-white',
-                }}
-            />
+                <CustomSelect<IdLabel>
+                    options={cambistaList}
+                    value={cambistasSelecionados}
+                    onChange={(v: any) => setCambistasSelecionados(v as IdLabel[])}
+                    isMulti={true}
+                    placeholder="Excluir Cambistas"
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => String(option.id)}
+                />
 
+                
 
+            </div>
 
             <Button onClick={handleSubmit} className="bg-blue-600 text-white hover:bg-blue-700">
                 Cadastrar Rifa

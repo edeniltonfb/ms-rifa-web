@@ -8,7 +8,7 @@ import Select, { ActionMeta, SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, RifaModelo, Serva } from '@common/data'
-import CustomSelect from '@components/VendedorCombobox'
+import CustomSelect from '@components/CustomCombobox'
 
 
 interface ConsultaTabProps {
