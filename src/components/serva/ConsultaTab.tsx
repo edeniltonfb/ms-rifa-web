@@ -8,6 +8,7 @@ import Select, { ActionMeta, SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, RifaModelo, Serva } from '@common/data'
+import CustomSelect from '@components/VendedorCombobox'
 
 
 interface ConsultaTabProps {
@@ -123,22 +124,16 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                     }}
                 />
 
-                <Select<IdLabel, false>
-                    placeholder="Selecione um vendedor"
+                <CustomSelect<IdLabel>
                     options={vendedores}
                     value={vendedorSelecionado}
-                    onChange={(v: SingleValue<IdLabel>, actionMeta: ActionMeta<IdLabel>) =>
-                        handleVendedorChange(v as IdLabel)
-                    }
-                    isClearable
-                    classNames={{
-                        control: () => 'dark:bg-gray-900',
-                        menu: () => 'z-50 max-h-48 overflow-y-auto',
-                        singleValue: () => 'dark:text-white',
-                        input: () => 'dark:text-white',
-                        placeholder: () => 'dark:text-white',
-                    }}
+                    onChange={handleVendedorChange}
+                    placeholder="Selecione um vendedor"
+                    getOptionLabel={(option) => option.label}
+                    getOptionValue={(option) => String(option.id)}
                 />
+
+
             </div>
 
             {resultadoConsulta && (
