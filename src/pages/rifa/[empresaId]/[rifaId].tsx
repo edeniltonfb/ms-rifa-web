@@ -11,6 +11,8 @@ import { Separator } from '@components/ui/separator'
 import { useRouter } from 'next/router'
 import { SingleValue } from 'react-select'
 import { useAppContext } from 'src/contexts/AppContext'
+import { useBilhetesFetcher } from '@hooks/useBilhetesFetcher'
+import DynamicBilheteResult from '@components/DynamicBilheteResult'
 
 interface RifaInfo {
     cliente: string
@@ -35,6 +37,10 @@ export default function RifaPage() {
     const router = useRouter()
     const { empresaId, rifaId } = router.query
 
+    const empresaIdStr = typeof empresaId === 'string' ? empresaId : ''
+    const rifaIdStr = typeof rifaId === 'string' ? rifaId : ''
+
+
     const [info, setInfo] = useState<RifaInfo | null>(null)
     const [vendedores, setVendedores] = useState<IdLabel[]>([])
     const [taloes, setTaloes] = useState<IdLabel[]>([])
@@ -42,6 +48,7 @@ export default function RifaPage() {
     const [talaoSelecionado, setTalaoSelecionado] = useState<IdLabel | null>(null)
     const [numero, setNumero] = useState('')
     const { showLoader, hideLoader } = useAppContext()
+    const { mode, data, fetchBilhetes } = useBilhetesFetcher()
 
     useEffect(() => {
 
@@ -62,54 +69,71 @@ export default function RifaPage() {
         }
     }, [rifaId, empresaId])
 
-    const handleFiltrar = () => {
-        const params: any = {
-            empresaId,
-            rifaId,
-            numero,
-            cambistaId: vendedorSelecionado?.id,
-            talao: talaoSelecionado,
-        }
-        instance.get('/listarbilhetes', { params }).then(res => {
-            if (!res.data.success) toast.error(res.data.errorMessage)
-            else console.log(res.data.data) // TODO: renderizar os resultados
-        })
-    }
-
     type FetchBilhetesProps = {
         cambistaId?: number;
         talaoId?: number;
         numero?: string;
     };
 
-    const fetchBilhetes = async ({ cambistaId, talaoId, numero }: FetchBilhetesProps) => {
-        showLoader()
-        try {
-            const res = await instance.get('/listarbilhetes', {
-                params: { empresaId, rifaId, cambistaId, talaoId, numero },
-            })
-            if (res.data.success) {
-                console.log(res.data.data)
-            } else {
-                toast.error(res.data.errorMessage)
-            }
-        } catch {
-            toast.error('Erro ao buscar servas')
-        } finally {
-            hideLoader()
-        }
-    }
+    /*  const fetchBilhetess = async ({ cambistaId, talaoId, numero }: FetchBilhetesProps) => {
+          showLoader()
+          try {
+              const res = await instance.get('/listarbilhetes', {
+                  params: { empresaId, rifaId, cambistaId, talaoId, numero },
+              })
+              if (res.data.success) {
+                  console.log(res.data.data)
+              } else {
+                  toast.error(res.data.errorMessage)
+              }
+          } catch {
+              toast.error('Erro ao buscar servas')
+          } finally {
+              hideLoader()
+          }
+      }
+  
+  
+      const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+          setVendedorSelecionado(v as SingleValue<IdLabel>)
+          setTalaoSelecionado(null);
+          setNumero('');
+  
+          if (v) fetchBilhetess({ cambistaId: (v as SingleValue<IdLabel>)!.id })
+      }
+  
+      const handleTalaoChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
+          setTalaoSelecionado(v as SingleValue<IdLabel>)
+          setVendedorSelecionado(null)
+          setNumero('');
+  
+          if (v) fetchBilhetess({ talaoId: (v as SingleValue<IdLabel>)!.id })
+      }*/
+
 
     const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
         setVendedorSelecionado(v as SingleValue<IdLabel>)
+        setTalaoSelecionado(null)
+        setNumero('')
+        if (v) {
+            if (empresaIdStr && rifaIdStr) {
+                fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, cambistaId: (v as IdLabel).id })
+            }
 
-        if (v) fetchBilhetes({ cambistaId: (v as SingleValue<IdLabel>)!.id })
+        }
+
     }
 
     const handleTalaoChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
         setTalaoSelecionado(v as SingleValue<IdLabel>)
+        setVendedorSelecionado(null)
+        setNumero('')
+        if (v) {
+            if (empresaIdStr && rifaIdStr) {
+                fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, talaoId: (v as IdLabel).id })
+            }
 
-        if (v) fetchBilhetes({ talaoId: (v as SingleValue<IdLabel>)!.id })
+        }
     }
 
     //if (!info) return <div>Carregando...</div>
@@ -142,7 +166,12 @@ export default function RifaPage() {
                     placeholder="Número"
                     value={numero}
                     onChange={(e) => setNumero(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleFiltrar()}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && empresaIdStr && rifaIdStr) {
+                            fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
+                        }
+                    }}
+
                 />
 
                 <CustomSelect<IdLabel>
@@ -168,8 +197,10 @@ export default function RifaPage() {
                 <Separator></Separator>
 
 
-            </div>
 
+
+            </div>
+            <DynamicBilheteResult mode={mode} data={data} />
         </div>
     )
 }
