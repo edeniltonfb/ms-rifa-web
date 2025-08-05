@@ -31,6 +31,8 @@ export default function Header({ toggleSidebar }: HeaderProps) {
         return 'Manter Cobrador';
       case '/clientes':
         return 'Lista de Clientes';
+      case '/EnvioParaImpressao':
+        return 'Enviar para Impressão ';
       default:
         return 'Páginas'; // Título padrão para rotas não mapeadas
     }

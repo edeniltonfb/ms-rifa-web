@@ -14,5 +14,5 @@ export function Card({ children, className }: { children: React.ReactNode; class
 }
 
 export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
-    return <div className={cn('p-4', className)}>{children}</div>
+    return <div className={cn('p-2', className)}>{children}</div>
 }

@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus } from 'lucide-react'
+import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from 'src/contexts/AuthContext'
@@ -96,7 +96,7 @@ export default function Sidebar({
                 ${pathname === '/cobradores' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
               `}
             >
-              <Users size={18} />
+              <User2 size={18} />
               Cobradores
             </Link>
           )}
@@ -110,8 +110,22 @@ export default function Sidebar({
                 ${pathname === '/vendedores' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
               `}
             >
-              <UserPlus size={18} />
+              <Users size={18} />
               Vendedores
+            </Link>
+          )}
+
+          {hasAccess(['ADMIN']) && (
+            <Link
+              href="/EnvioParaImpressao"
+              onClick={handleLinkClick}
+              className={`
+                flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors
+                ${pathname === '/EnvioParaImpressao' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+              `}
+            >
+              <Users size={18} />
+              Envio para Impressão
             </Link>
           )}
 

@@ -153,7 +153,7 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                         {servas.map((s, idx) => (
                             <Card
                                 key={idx}
-                                className="relative flex flex-col w-min h-[50px] items-center justify-center"
+                                className="relative flex flex-col w-min h-min items-center justify-center"
                             >
                                 {/* Botão de excluir */}
                                 <button

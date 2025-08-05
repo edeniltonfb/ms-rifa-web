@@ -47,15 +47,15 @@ export default function RifaModeloPage() {
             {rifaModelo && (
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-6">
 
-                    <Card className="p-4 flex flex-col gap-2 text-center items-start justify-center">
+                    <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
                         <span className="text-sm text-muted-foreground">Tipo</span>
                         <span className="text-lg font-semibold">{rifaModelo.tipo}</span>
                     </Card>
-                    <Card className="p-4 flex flex-col gap-2 text-center items-start justify-center">
+                    <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
                         <span className="text-sm text-muted-foreground">Descrição</span>
                         <span className="text-lg font-semibold">{rifaModelo.descricao}</span>
                     </Card>
-                    <Card className="p-4 flex flex-col gap-2 text-center items-start justify-center">
+                    <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
                         <span className="text-sm text-muted-foreground">Servas</span>
                         <span className="text-lg font-semibold">{rifaModelo.quantidadeServas}</span>
                     </Card>

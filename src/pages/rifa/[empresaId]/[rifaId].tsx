@@ -15,17 +15,16 @@ import { useBilhetesFetcher } from '@hooks/useBilhetesFetcher'
 import DynamicBilheteResult from '@components/DynamicBilheteResult'
 
 interface RifaInfo {
-    cliente: string
+    id: number;
+    empresa: string
     dataSorteio: string
+    situacao:string
     tipo: string
     servas: number
-    avisos: number
-    complementares: number
-    naoCadastrados: number
+    avulsos: number
+    complemento: number
     total: number
-    vendidos: number
-    naoVendidos: number
-    talaoResumo: string
+    modalidadeVenda: string
 }
 
 interface IdLabel {
@@ -53,7 +52,7 @@ export default function RifaPage() {
     useEffect(() => {
 
         if (rifaId && empresaId) {
-
+            showLoader();
             instance.get(`/buscarrifa?empresaId=${empresaId}&rifaId=${rifaId}`).then(res => {
                 if (res.data.success) setInfo(res.data.data)
                 else toast.error(res.data.errorMessage)
@@ -66,50 +65,9 @@ export default function RifaPage() {
             instance.get(`/listartalaoidlabel?rifaId=${rifaId}`).then(res => {
                 if (res.data.success) setTaloes(res.data.data)
             })
+        hideLoader();
         }
     }, [rifaId, empresaId])
-
-    type FetchBilhetesProps = {
-        cambistaId?: number;
-        talaoId?: number;
-        numero?: string;
-    };
-
-    /*  const fetchBilhetess = async ({ cambistaId, talaoId, numero }: FetchBilhetesProps) => {
-          showLoader()
-          try {
-              const res = await instance.get('/listarbilhetes', {
-                  params: { empresaId, rifaId, cambistaId, talaoId, numero },
-              })
-              if (res.data.success) {
-                  console.log(res.data.data)
-              } else {
-                  toast.error(res.data.errorMessage)
-              }
-          } catch {
-              toast.error('Erro ao buscar servas')
-          } finally {
-              hideLoader()
-          }
-      }
-  
-  
-      const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
-          setVendedorSelecionado(v as SingleValue<IdLabel>)
-          setTalaoSelecionado(null);
-          setNumero('');
-  
-          if (v) fetchBilhetess({ cambistaId: (v as SingleValue<IdLabel>)!.id })
-      }
-  
-      const handleTalaoChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
-          setTalaoSelecionado(v as SingleValue<IdLabel>)
-          setVendedorSelecionado(null)
-          setNumero('');
-  
-          if (v) fetchBilhetess({ talaoId: (v as SingleValue<IdLabel>)!.id })
-      }*/
-
 
     const handleVendedorChange = (v: SingleValue<IdLabel> | IdLabel[] | null) => {
         setVendedorSelecionado(v as SingleValue<IdLabel>)
@@ -140,18 +98,50 @@ export default function RifaPage() {
 
     return (
         <div className="p-0 space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1 text-white text-sm">
-                <Card className="bg-red-600"><CardContent>Cliente: {info?.cliente}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Data da Rifa: {info?.dataSorteio}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Tipo: {info?.tipo}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Servas: {info?.servas}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Avisos: {info?.avisos}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Complementares: {info?.complementares}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Não Cadastrados: {info?.naoCadastrados}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Total: {info?.total}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Vendidos: {info?.vendidos}</CardContent></Card>
-                <Card className="bg-red-600"><CardContent>Não Vendidos: {info?.naoVendidos}</CardContent></Card>
-                <Card className="bg-red-600 col-span-2"><CardContent>Talões: {info?.talaoResumo}</CardContent></Card>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-1 text-black text-sm">
+
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Código</span>
+                    <span className="text-lg font-semibold">{info?.id}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Empresa</span>
+                    <span className="text-lg font-semibold">{info?.empresa}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Data</span>
+                    <span className="text-lg font-semibold">{info?.dataSorteio}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Situação</span>
+                    <span className="text-lg font-semibold">{info?.situacao}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Tipo</span>
+                    <span className="text-lg font-semibold">{info?.tipo}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Modalidade de Venda</span>
+                    <span className="text-lg font-semibold">{info?.modalidadeVenda}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Servas</span>
+                    <span className="text-lg font-semibold">{info?.servas}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Avulsos</span>
+                    <span className="text-lg font-semibold">{info?.avulsos}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Complemento</span>
+                    <span className="text-lg font-semibold">{info?.complemento}</span>
+                </Card>
+                <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
+                    <span className="text-sm text-muted-foreground">Total</span>
+                    <span className="text-lg font-semibold">{info?.total}</span>
+                </Card>
+
+
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -194,12 +184,13 @@ export default function RifaPage() {
                     getOptionValue={(option) => String(option.id)}
                 />
 
-                <Separator></Separator>
+               
 
 
 
 
             </div>
+             <Separator></Separator>
             <DynamicBilheteResult mode={mode} data={data} />
         </div>
     )

@@ -23,17 +23,22 @@ export default function DynamicBilheteResult({ mode, data }: Props) {
 
     if (mode === 'LIST' && Array.isArray(data)) {
         return (
-            <div className="flex flex-wrap gap-2 mt-2">
-                {data.map((item) => (
-                    <Card
-                        key={item.id}
-                        className="relative flex flex-col w-min h-[50px] items-center justify-center">
-                        <CardContent className="text-center font-mono font-bold text-xl">
-                            {item.label}
-                        </CardContent>
-                    </Card>
 
-                ))}
+            <div className='flex flex-col '><span className='font-bold text-[#55F]'>Total de bilhetes: {data.length}</span>
+                <div className="flex flex-wrap gap-2 mt-2 ">
+
+
+                    {data.map((item) => (
+                        <Card
+                            key={item.id}
+                            className="relative flex flex-col w-min h-min items-center justify-center">
+                            <CardContent className="text-center font-mono font-bold text-xl">
+                                {item.label}
+                            </CardContent>
+                        </Card>
+
+                    ))}
+                </div>
             </div>
         )
     }
@@ -51,5 +56,5 @@ export default function DynamicBilheteResult({ mode, data }: Props) {
         )
     }
 
-    return null
+    return <div>Nenhum bilhete encontrado</div>
 }
