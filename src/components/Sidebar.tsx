@@ -129,6 +129,20 @@ export default function Sidebar({
             </Link>
           )}
 
+          {hasAccess(['ADMIN']) && (
+            <Link
+              href="/resultado"
+              onClick={handleLinkClick}
+              className={`
+                flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors
+                ${pathname === '/resultado' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+              `}
+            >
+              <Users size={18} />
+              Envio para Impressão
+            </Link>
+          )}
+
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"

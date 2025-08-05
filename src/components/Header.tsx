@@ -32,7 +32,9 @@ export default function Header({ toggleSidebar }: HeaderProps) {
       case '/clientes':
         return 'Lista de Clientes';
       case '/EnvioParaImpressao':
-        return 'Enviar para Impressão ';
+        return 'Enviar para Impressão'; 
+        case '/resultado':
+        return 'Resultado';
       default:
         return 'Páginas'; // Título padrão para rotas não mapeadas
     }

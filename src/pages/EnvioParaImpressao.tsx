@@ -6,6 +6,7 @@ import Select from 'react-select'
 import instance from '@lib/axios'
 import { toast } from 'react-toastify'
 import CustomSelect from '@components/CustomCombobox'
+import { useAppContext } from 'src/contexts/AppContext'
 
 interface IdLabel {
   id: number
@@ -23,18 +24,20 @@ export default function EnvioParaImpressaoPage() {
     { empresa: null, rifa: null },
     { empresa: null, rifa: null }
   ])
+  const { showLoader, hideLoader } = useAppContext();
 
   useEffect(() => {
+    showLoader();
     instance.get('/listarempresas').then(res => {
       if (res.data.success) setEmpresas(res.data.data)
       else toast.error(res.data.errorMessage)
-    })
+    }).finally(() => hideLoader())
   }, [])
 
   const carregarRifas = async (empresaId: number) => {
     if (rifasPorEmpresa[empresaId]) return
 
-    const res = await instance.get(`/listarrifasporempresa?empresaId=${empresaId}`)
+    const res = await instance.get(`/listarrifasporempresa?empresaId=${empresaId}`).finally(() => hideLoader())
     if (res.data.success) {
       setRifasPorEmpresa(prev => ({ ...prev, [empresaId]: res.data.data }))
     } else {
