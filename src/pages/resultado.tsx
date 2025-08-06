@@ -5,29 +5,13 @@ import { Input } from '@components/ui/input'
 import { Button } from '@components/ui/button'
 import { toast } from 'react-toastify'
 import instance from '@lib/axios'
-import Select from 'react-select'
 import dayjs from 'dayjs'
 import NumeroInput from '@components/NumeroInput'
 import { useAppContext } from 'src/contexts/AppContext'
 import CustomSelect from '@components/CustomSelect'
 import { Separator } from '@components/ui/separator'
-
-interface Resultado {
-    data: string
-    horario: string
-    [key: string]: string | number
-}
-
-interface Rifa {
-    empresa: string
-    data: string
-    horario: string
-    itemPremiacaoList: {
-        numero: string
-        talao: string
-        vendedor: string
-    }[]
-}
+import { RifaCard } from '@components/ResultadoRifaCard'
+import { CadastroResultado, Rifa } from '@common/data'
 
 const horarios = [
     { label: 'Federal', value: 'FED' },
@@ -40,7 +24,7 @@ const faixas = [
     { label: '1º ao 10º', value: '110P', quantidade: 10 }
 ]
 
-function RifaCard({ rifa }: { rifa: Rifa }) {
+/*function RifaCard({ rifa }: { rifa: Rifa }) {
     return (
         <div className="border rounded-md shadow-sm p-4 bg-white dark:bg-gray-900 w-full sm:w-[30%] md:w-[30%] xl:w-[20%]">
             <h3 className="font-bold text-lg mb-2">{rifa.empresa}</h3>
@@ -49,14 +33,14 @@ function RifaCard({ rifa }: { rifa: Rifa }) {
                 {rifa.itemPremiacaoList.map((item, idx) => (
                     <div key={idx} className="text-sm border p-2 rounded bg-gray-100 dark:bg-gray-800">
                         <div className='text-[28px] pb-4 text-center'><strong>{item.numero}</strong> </div>
-                        <div><strong>Talão:</strong> {item.talao}</div>
-                        <div><strong>Vendedor:</strong> {item.vendedor}</div>
+                        <div><strong> {item.ordem}º - </strong>{item.descricao &&  <strong> {item.descricao}</strong>}</div>
+                        <div><strong> {item.talao} </strong>{item.vendedor &&  <strong> {item.vendedor}</strong>}</div>
                     </div>
                 ))}
             </div>
         </div>
     )
-}
+}*/
 
 export default function CadastroEdicaoResultadoPage() {
     const [dataResultado, setDataResultado] = useState(dayjs().format('YYYY-MM-DD'))
@@ -84,7 +68,7 @@ export default function CadastroEdicaoResultadoPage() {
             })
 
             if (res.data.success && res.data.data) {
-                const resultado = res.data.data as Resultado
+                const resultado = res.data.data as CadastroResultado
                 const novosNumeros = []
                 for (let i = 1; i <= faixa!.quantidade; i++) {
                     novosNumeros.push(resultado[`_${i}Premio`] as string || '')
@@ -133,8 +117,12 @@ export default function CadastroEdicaoResultadoPage() {
         try {
             showLoader();
             const res = await instance.post('/salvarresultado', body)
-            if (res.data.success) toast.success('Resultado salvo com sucesso')
-            else toast.error(res.data.errorMessage)
+            if (res.data.success) { 
+                const resultado = res.data.data as CadastroResultado
+                toast.success('Resultado salvo com sucesso') 
+                setRifas(Array.isArray(resultado.rifaList) ? resultado.rifaList : [])
+            }
+            else { toast.error(res.data.errorMessage) }
         } catch {
             toast.error('Erro ao salvar resultado')
         } finally {

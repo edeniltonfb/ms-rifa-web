@@ -93,6 +93,28 @@ export type ExtratoVendaAdminTO = {
     extratoRotaList: ExtratoVendaRotaTO[];
 };
 
+export interface Rifa {
+    rifaId: number
+    empresa: string
+    data: string
+    horario: string
+    itemPremiacaoList: {
+        numero: string
+        talao: string
+        vendedor: string
+        ordem: number
+        descricao: string
+        cidadeApostador:string
+        cidadeVendedor:string
+        situacao:string
+    }[]
+}
+
+export interface CadastroResultado {
+    data: string
+    horario: string
+    [key: string]: string | number
+}
 
 
 export interface User {
