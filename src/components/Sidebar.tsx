@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2 } from 'lucide-react'
+import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2, Printer, Paperclip, Edit2Icon, Edit2, Edit } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from 'src/contexts/AuthContext'
@@ -124,7 +124,7 @@ export default function Sidebar({
                 ${pathname === '/EnvioParaImpressao' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
               `}
             >
-              <Users size={18} />
+              <Printer size={18} />
               Envio para Impressão
             </Link>
           )}
@@ -138,12 +138,12 @@ export default function Sidebar({
                 ${pathname === '/resultado' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
               `}
             >
-              <Users size={18} />
-              Envio para Impressão
+              <Edit size={18} />
+              Resultado
             </Link>
           )}
 
-          <button
+          {/* <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
           >
@@ -187,8 +187,9 @@ export default function Sidebar({
 
               </motion.div>
             )}
+           
           </AnimatePresence>
-
+*/ }
 
           <button
             onClick={() => logout()}
