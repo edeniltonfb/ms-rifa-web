@@ -13,7 +13,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Slider from '@radix-ui/react-slider';
 import { Transition, Dialog as HeadlessDialog } from '@headlessui/react';
 import { useAuth } from 'src/contexts/AuthContext';
-import Layout from '@components/Layout';
+import instance from '@lib/axios';
 
 
 // --- Constantes ---
@@ -48,20 +48,15 @@ function DraggableItem({ id, content, initialTransform }: DraggableItemProps) {
         transform: CSS.Translate.toString(finalTransform),
         cursor: transform ? 'grabbing' : 'grab',
         touchAction: 'none',
-        // Adicionando transição suave para o boxShadow
         transition: 'box-shadow 0.2s ease-in-out',
+        width: `${DRAGGABLE_ITEM_WIDTH}px`,
+        height: `${DRAGGABLE_ITEM_HEIGHT}px`,
     };
 
     return (
         <div
             ref={setNodeRef}
-            style={{
-                ...style,
-                width: `${DRAGGABLE_ITEM_WIDTH}px`,
-                height: `${DRAGGABLE_ITEM_HEIGHT}px`,
-                // Adicionando transição suave para o boxShadow
-                transition: 'box-shadow 0.2s ease-in-out',
-            }}
+            style={style}
             {...listeners}
             {...attributes}
             className="p-2 border border-gray-400 bg-white shadow-md flex justify-center items-center font-bold select-none absolute"
@@ -79,17 +74,20 @@ interface PrintPosition {
     yCanhoto: number;
 }
 
-// --- Interface para os dados retornados pela API de layout ---
-interface LayoutApiData {
-    orientacao: 'RETRATO' | 'PAISAGEM';
-    quantidade: number;
-    [key: string]: number | string | null;
+// --- Interfaces para as respostas da API (adaptadas para Axios) ---
+interface LayoutApiResponse {
+    success: boolean;
+    errorMessage: string;
+    data: {
+        orientacao: 'RETRATO' | 'PAISAGEM';
+        quantidade: number;
+        [key: string]: number | string | null;
+    };
 }
 
-// --- Interface para a resposta da API de impressão de teste ---
 interface PrintTestApiResponse {
     success: boolean;
-    errorMessage: string | null;
+    errorMessage: string;
     data: string | null;
 }
 
@@ -125,7 +123,7 @@ const Builder: React.FC = () => {
         setOrientation(value as 'retrato' | 'paisagem');
     };
 
-    const handleSubmitForm = async () => {
+    const handleSubmitForm = () => {
         if (!user?.token) {
             enqueueSnackbar('Token de autenticação não disponível. Faça login novamente.', { variant: 'error' });
             return;
@@ -137,22 +135,16 @@ const Builder: React.FC = () => {
         const orientationApiValue = orientation === 'retrato' ? 1 : 2;
         const quantityApiValue = numPositions;
 
-        try {
-            const url = `https://multisorteios.dev/msrifaadmin/api/carregarlayout?orientacao=${orientationApiValue}&quantidade=${quantityApiValue}`;
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization':`Bearer ${user.token}`
-                },
-            });
-
-            const result = await response.json();
-
-            if (result.success && result.data) {
-                const data: LayoutApiData = result.data;
-
+        instance.get<LayoutApiResponse>('/carregarlayout', {
+            params: {
+                token: user.token,
+                orientacao: orientationApiValue,
+                quantidade: quantityApiValue,
+            },
+        })
+        .then((res) => {
+            if (res.data.success && res.data.data) {
+                const data = res.data.data;
                 const currentPanelWidth = data.orientacao === 'RETRATO' ? A4_PORTRAIT_WIDTH : A4_PORTRAIT_HEIGHT;
                 const currentPanelHeight = data.orientacao === 'RETRATO' ? A4_PORTRAIT_HEIGHT : A4_PORTRAIT_WIDTH;
                 const calculatedNumElements = data.quantidade * 2;
@@ -190,21 +182,23 @@ const Builder: React.FC = () => {
                             scaleY: 1,
                         };
                     } else {
-                        console.warn(`Dados de posição incompletos ou inválidos para o par ${i}. xCanhoto: ${xCanhoto}, yCanhoto: ${yCanhoto}, xBilhete: ${xBilhete}, yBilhete: ${yBilhete}`);
+                        console.warn(`Dados de posição incompletos ou inválidos para o par ${i}.`);
                     }
                 }
                 setItemTransforms(loadedTransforms);
                 enqueueSnackbar('Layout carregado com sucesso!', { variant: 'success' });
                 setIsModalOpen(false);
             } else {
-                enqueueSnackbar(result.errorMessage || 'Erro ao carregar layout: Dados inválidos.', { variant: 'error' });
+                enqueueSnackbar(res.data.errorMessage || 'Erro ao carregar layout: Dados inválidos.', { variant: 'error' });
             }
-        } catch (error) {
+        })
+        .catch((error) => {
             console.error('Erro na chamada da API de carregar layout:', error);
             enqueueSnackbar('Não foi possível conectar ao servidor para carregar o layout.', { variant: 'error' });
-        } finally {
+        })
+        .finally(() => {
             setIsFetchingLayout(false);
-        }
+        });
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -230,7 +224,7 @@ const Builder: React.FC = () => {
         return index % 2 === 0 ? `Canhoto ${num}` : `Bilhete ${num}`;
     };
 
-    const handlePrintApiCall = async (
+    const handlePrintApiCall = (
         endpointSuffix: string,
         requiresCodigoValidation: boolean
     ) => {
@@ -272,59 +266,49 @@ const Builder: React.FC = () => {
             });
         }
 
-        try {
-            let url = `https://multisorteios.dev/msrifaadmin/api/${endpointSuffix}`;
-            if (requiresCodigoValidation) {
-                url += `&codigo=${codigo}`;
-            }
+        let params: { token: string; codigo?: string } = { token: user.token };
+        if (requiresCodigoValidation) {
+            params.codigo = codigo;
+        }
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization':`Bearer ${user.token}`
-                },
-                body: JSON.stringify(printPositions),
-            });
-
-            const result: PrintTestApiResponse = await response.json();
-
-            if (result.success) {
-                if (endpointSuffix === 'gerararquivotesteimpressao') {
-                    if (result.data && result.data) {
-                        setTestPdfLink(result.data);
-                        enqueueSnackbar('Link para o arquivo de teste de impressão gerado. Clique no link abaixo para baixar.', { variant: 'success' });
-                        setCodigo('');
+        instance.post<PrintTestApiResponse>(`/${endpointSuffix}`, printPositions, { params })
+            .then((res) => {
+                if (res.data.success) {
+                    if (endpointSuffix === 'gerararquivotesteimpressao') {
+                        if (res.data.data) {
+                            setTestPdfLink(res.data.data);
+                            enqueueSnackbar('Link para o arquivo de teste de impressão gerado. Clique no link abaixo para baixar.', { variant: 'success' });
+                            setCodigo('');
+                        } else {
+                            enqueueSnackbar('Erro: Link de download não encontrado na resposta do teste de impressão.', { variant: 'error' });
+                        }
                     } else {
-                        enqueueSnackbar('Erro: Link de download não encontrado na resposta do teste de impressão.', { variant: 'error' });
+                        enqueueSnackbar('Arquivo de impressão gerado com sucesso!', { variant: 'success' });
+                        setCodigo('');
                     }
                 } else {
-                    enqueueSnackbar('Arquivo de impressão gerado com sucesso!', { variant: 'success' });
-                    setCodigo('');
+                    enqueueSnackbar(res.data.errorMessage || `Erro desconhecido ao gerar arquivo via ${endpointSuffix}.`, { variant: 'error' });
                 }
-            } else {
-                enqueueSnackbar(result.errorMessage || `Erro desconhecido ao gerar arquivo via ${endpointSuffix}.`, { variant: 'error' });
-            }
-
-        } catch (error) {
-            console.error(`Erro na chamada da API de ${endpointSuffix}:`, error);
-            enqueueSnackbar(`Não foi possível conectar ao servidor para ${endpointSuffix}.`, { variant: 'error' });
-        } finally {
-            setIsSubmitting(false);
-        }
+            })
+            .catch((error) => {
+                console.error(`Erro na chamada da API de ${endpointSuffix}:`, error);
+                enqueueSnackbar(`Não foi possível conectar ao servidor para ${endpointSuffix}.`, { variant: 'error' });
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
-    const handleSubmitPrintFileTest = async () => {
-        await handlePrintApiCall('gerararquivotesteimpressao', false);
+    const handleSubmitPrintFileTest = () => {
+        handlePrintApiCall('gerararquivotesteimpressao', false);
     };
 
-    const handleSubmitPrintFile = async () => {
-        await handlePrintApiCall('gerararquivoimpressao', true);
+    const handleSubmitPrintFile = () => {
+        handlePrintApiCall('gerararquivoimpressao', true);
     };
 
     return (
         <div>
-
             {!panelConfig ? (
                 <div className="mt-0 text-center">
                     <button
@@ -382,8 +366,9 @@ const Builder: React.FC = () => {
                                 <input
                                     type="text"
                                     id="codigo-input"
-                                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 ${codigo.length > 0 && codigo.length !== 5 ? 'border-red-500' : ''
-                                        }`}
+                                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 ${
+                                        codigo.length > 0 && codigo.length !== 5 ? 'border-red-500' : ''
+                                    }`}
                                     value={codigo}
                                     onChange={(e) => setCodigo(e.target.value)}
                                     maxLength={5}
