@@ -131,6 +131,20 @@ export default function Sidebar({
 
           {hasAccess(['ADMIN']) && (
             <Link
+              href="/impressao"
+              onClick={handleLinkClick}
+              className={`
+                flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors
+                ${pathname === '/impressao' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+              `}
+            >
+              <Printer size={18} />
+              Impressão
+            </Link>
+          )}
+
+          {hasAccess(['ADMIN']) && (
+            <Link
               href="/resultado"
               onClick={handleLinkClick}
               className={`

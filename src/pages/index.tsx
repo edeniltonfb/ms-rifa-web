@@ -24,6 +24,7 @@ interface Rifa {
   quantidadeNumeros: number
   quantidadeNumerosPorBilhete: number
   empresaId: number
+  descricao:string
 }
 
 interface EmpresaDashboard {
@@ -88,13 +89,13 @@ export default function DashboardPage() {
             <div className="space-y-8">
               <div>
                 <h2 className="text-xl font-bold mb-4">Modelos</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {empresa.rifaModeloList.map((modelo) => (
 
-                    <Card key={modelo.id} className="p-4">
+                    <Card key={modelo.id} className="p-4 border-gray-400">
                       <Link href={`/rifamodelo/${empresa.empresaId}/${modelo.id}`}>
-                        <h3 className="text-lg font-semibold">{modelo.tipo}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{modelo.descricao}</p>
+                        <h3 className="text-2xl  font-bold">{modelo.tipo}</h3>
+                        <p className="text-lg font-semibold">{modelo.descricao}</p>
                       </Link>
                     </Card>
 
@@ -104,14 +105,12 @@ export default function DashboardPage() {
 
               <div>
                 <h2 className="text-xl font-bold mb-4">Rifas</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {empresa.rifaList.map((rifa) => (
-                    <Card key={rifa.id} className="p-4">
+                    <Card key={rifa.id} className="p-4 border-green-400">
                       <Link href={`/rifa/${empresa.empresaId}/${rifa.id}`}>
-                        <h3 className="text-lg font-semibold">Modalidade: {rifa.modalidadeVenda}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Data: {rifa.dataSorteio}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Qtd. Números: {rifa.quantidadeNumeros}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Números por Bilhete: {rifa.quantidadeNumerosPorBilhete}</p>
+                        <h3 className="text-2xl  font-bold">{rifa.dataSorteio}</h3>
+                        <p className="text-lg font-semibold">{rifa.descricao}</p>
                       </Link>
                     </Card>
                   ))}

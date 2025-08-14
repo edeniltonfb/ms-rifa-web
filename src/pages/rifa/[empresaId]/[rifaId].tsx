@@ -98,7 +98,7 @@ export default function RifaPage() {
 
     return (
         <div className="p-0 space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1 text-black text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 text-black text-sm">
 
                 <Card className="p-2 flex flex-col gap-2 text-center items-start justify-center">
                     <span className="text-sm text-muted-foreground">Código</span>
@@ -145,10 +145,9 @@ export default function RifaPage() {
             </div>
 
             <div className="flex flex-wrap gap-2">
-                <Button className="bg-blue-600 text-white">Enviar para a Gráfica...</Button>
-                <Button className="bg-blue-600 text-white">Imprimir Conferência</Button>
-                <Button className="bg-blue-600 text-white">Conferência Por Vendedor...</Button>
-                <Button className="bg-blue-600 text-white">Vales</Button>
+                <Button className="bg-blue-600 text-white w-[120px]">Conferência</Button>
+                {/*<Button className="bg-blue-600 text-white">Conf por Vendedor...</Button>*/}
+                <Button className="bg-blue-600 text-white w-[120px]">Vales</Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -192,6 +191,8 @@ export default function RifaPage() {
             </div>
              <Separator></Separator>
             <DynamicBilheteResult mode={mode} data={data} />
+
+            <div className='h-[150px]'></div>
         </div>
     )
 }

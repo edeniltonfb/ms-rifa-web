@@ -14,12 +14,12 @@ export default function Header({ toggleSidebar }: HeaderProps) {
   // Defina um mapeamento de rotas para títulos
   const getPageTitle = (path: string) => {
 
-    if(path?.startsWith('/rifamodelo/')){
-        return 'Modelo';
+    if (path?.startsWith('/rifamodelo/')) {
+      return 'Modelo';
     }
 
-    if(path?.startsWith('/rifa/')){
-        return 'Rifa';
+    if (path?.startsWith('/rifa/')) {
+      return 'Rifa';
     }
 
     switch (path) {
@@ -32,9 +32,11 @@ export default function Header({ toggleSidebar }: HeaderProps) {
       case '/clientes':
         return 'Lista de Clientes';
       case '/EnvioParaImpressao':
-        return 'Enviar para Impressão'; 
-        case '/resultado':
+        return 'Enviar para Impressão';
+      case '/resultado':
         return 'Resultado';
+      case '/impressao':
+        return 'Impressão';
       default:
         return 'Páginas'; // Título padrão para rotas não mapeadas
     }
