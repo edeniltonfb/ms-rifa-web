@@ -9,6 +9,7 @@ import { Card } from '@components/ui/card'
 import { useAppContext } from 'src/contexts/AppContext'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { Separator } from '@components/ui/separator'
 
 interface RifaModelo {
   id: number
@@ -86,10 +87,10 @@ export default function DashboardPage() {
 
         {empresas.map((empresa) => (
           <TabsContent key={empresa.empresaId} value={empresa.empresaId.toString()}>
-            <div className="space-y-8">
-              <div>
+            <div className="space-y-4">
+              <div className='space-y-4'>
                 <h2 className="text-xl font-bold mb-4">Modelos</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 ">
                   {empresa.rifaModeloList.map((modelo) => (
 
                     <Card key={modelo.id} className="p-4 border-gray-400">
@@ -102,8 +103,8 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
-
-              <div>
+              <Separator></Separator>
+              <div className='space-y-4'>
                 <h2 className="text-xl font-bold mb-4">Rifas</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {empresa.rifaList.map((rifa) => (

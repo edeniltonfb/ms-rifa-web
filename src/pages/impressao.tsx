@@ -11,7 +11,7 @@ import { useSnackbar } from 'notistack';
 // --- Importações de bibliotecas sem estilo (Radix UI e Headless UI) ---
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import * as Slider from '@radix-ui/react-slider';
-import { Transition, Dialog as HeadlessDialog } from '@headlessui/react';
+import { Dialog as HeadlessDialog, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { useAuth } from 'src/contexts/AuthContext';
 import instance from '@lib/axios';
 
@@ -425,7 +425,7 @@ const Builder: React.FC = () => {
 
             {/* Modal do Formulário com Radix UI e Headless UI */}
             <HeadlessDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-                <Transition.Child
+                <TransitionChild
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -434,10 +434,10 @@ const Builder: React.FC = () => {
                     leaveTo="opacity-0"
                 >
                     <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-                </Transition.Child>
+                </TransitionChild>
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
-                    <Transition.Child
+                    <TransitionChild
                         enter="ease-out duration-300"
                         enterFrom="opacity-0 scale-95"
                         enterTo="opacity-100 scale-100"
@@ -445,10 +445,10 @@ const Builder: React.FC = () => {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                        <HeadlessDialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl relative">
-                            <HeadlessDialog.Title className="text-xl font-semibold mb-4">
+                        <DialogPanel className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl relative">
+                            <DialogTitle className="text-xl font-semibold mb-4">
                                 Configurar Layout do Painel
-                            </HeadlessDialog.Title>
+                            </DialogTitle>
 
                             <div className="mt-2">
                                 <label htmlFor="num-positions-slider" className="block text-sm font-medium text-gray-700">
@@ -526,8 +526,8 @@ const Builder: React.FC = () => {
                                     'Confirmar'
                                 )}
                             </button>
-                        </HeadlessDialog.Panel>
-                    </Transition.Child>
+                        </DialogPanel>
+                    </TransitionChild>
                 </div>
             </HeadlessDialog>
         </div>

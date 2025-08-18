@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2, Printer, Paperclip, Edit2Icon, Edit2, Edit } from 'lucide-react'
+import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2, Printer, Paperclip, Edit2Icon, Edit2, Edit, Send } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from 'src/contexts/AuthContext'
@@ -124,7 +124,7 @@ export default function Sidebar({
                 ${pathname === '/EnvioParaImpressao' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
               `}
             >
-              <Printer size={18} />
+              <Send size={18} />
               Envio para Impressão
             </Link>
           )}

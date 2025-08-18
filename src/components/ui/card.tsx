@@ -4,7 +4,7 @@ export function Card({ children, className }: { children: React.ReactNode; class
     return (
         <div
             className={cn(
-                'rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm',
+                'rounded-lg border border-gray-400 dark:border-gray-800 bg-[#ddd] dark:bg-gray-900 shadow-sm dark:text-white',
                 className
             )}
         >
