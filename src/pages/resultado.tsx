@@ -19,9 +19,8 @@ const horarios = [
 ]
 
 const faixas = [
-    { label: '1º Premio', value: '1P', quantidade: 1 },
-    { label: '1º ao 5º', value: '15P', quantidade: 5 },
-    { label: '1º ao 10º', value: '110P', quantidade: 10 }
+    { label: '1º ao 5º', value: '1-5', quantidade: 5, inicial: 1 },
+    { label: '6º ao 10º', value: '6-10', quantidade: 5, inicial: 6 }
 ]
 
 /*function RifaCard({ rifa }: { rifa: Rifa }) {
@@ -45,7 +44,7 @@ const faixas = [
 export default function CadastroEdicaoResultadoPage() {
     const [dataResultado, setDataResultado] = useState(dayjs().format('YYYY-MM-DD'))
     const [horario, setHorario] = useState<{ label: string, value: string } | null>(null)
-    const [faixa, setFaixa] = useState<{ label: string, value: string, quantidade: number } | null>(null)
+    const [faixa, setFaixa] = useState<{ label: string, value: string, quantidade: number, inicial: number } | null>(null)
     const [numeros, setNumeros] = useState<string[]>([])
     const [rifas, setRifas] = useState<Rifa[]>([])
     const { showLoader, hideLoader } = useAppContext();
@@ -63,14 +62,15 @@ export default function CadastroEdicaoResultadoPage() {
             const res = await instance.get('/buscarresultado', {
                 params: {
                     horario: horario?.value,
-                    dataResultado
+                    dataResultado,
+                    faixa:faixa?.value,
                 }
             })
 
             if (res.data.success && res.data.data) {
                 const resultado = res.data.data as CadastroResultado
                 const novosNumeros = []
-                for (let i = 1; i <= faixa!.quantidade; i++) {
+                for (let i = faixa!.inicial; i < faixa!.quantidade + faixa!.inicial; i++) {
                     novosNumeros.push(resultado[`_${i}Premio`] as string || '')
                 }
                 setNumeros(novosNumeros)
@@ -94,7 +94,7 @@ export default function CadastroEdicaoResultadoPage() {
     }
 
     const validarNumeros = () => {
-        if (numeros.length !== faixa?.quantidade && numeros.length > 0) return false
+        if (numeros.length !== faixa?.quantidade && numeros.length > 0) {alert ('eita'); return false}
         const tamanho = numeros[0]?.length
         return numeros.every(n => (n.length === tamanho || n.length === 0) && (tamanho === 4 || tamanho === 5 || tamanho === 0))
     }
@@ -107,11 +107,12 @@ export default function CadastroEdicaoResultadoPage() {
 
         const body: any = {
             horario: horario?.value,
-            data: dayjs(dataResultado).format('DD/MM/YYYY')
+            data: dayjs(dataResultado).format('DD/MM/YYYY'),
+            faixa:faixa?.value,
         }
 
         numeros.forEach((num, idx) => {
-            body[`_${idx + 1}Premio`] = num
+            body[`_${idx + faixa!.inicial}Premio`] = num
         })
 
         try {
@@ -170,7 +171,7 @@ export default function CadastroEdicaoResultadoPage() {
                             key={idx}
                             value={numero}
                             onChange={(val) => handleNumeroChange(val, idx)}
-                            label={`${idx + 1}º Prêmio`}
+                            label={`${idx + faixa!.inicial}º Prêmio`}
                         />
                     ))}
                 </div>

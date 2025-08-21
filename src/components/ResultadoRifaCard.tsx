@@ -45,10 +45,21 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
 
     const handleSalvar = async () => {
         // Validação básica:
-        const validItem = premiacaoData.find(item => item.situacao && item.cidadeApostador.trim())
-        if (!validItem) {
-            toast.error('Preencha a situação e cidade de pelo menos um prêmio.')
-            return
+        const invalidItem = premiacaoData.find(item => {
+            if (!item.situacao) {
+                return true;
+            }
+            // Se a situação for 'VDD', então cidadeApostador é obrigatório
+            if (item.situacao!.value === 'VDD') {
+                return !(item.cidadeApostador && item.cidadeApostador.trim().length > 0);
+            }
+            // Para outras situações, não é obrigatório
+            return false;
+        });
+
+        if (invalidItem) {
+            toast.error('Para prêmios com situação "VDD", a cidade do apostador é obrigatória.');
+            return;
         }
 
         const body = {
