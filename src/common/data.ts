@@ -4,6 +4,16 @@ export interface ApiResult {
     data?: any;
 }
 
+export const horarios = [
+  { label: 'Federal', value: 'FED' },
+  { label: '19hs Bahia', value: '19B' }
+]
+
+export const faixas = [
+    { label: '1º ao 5º', value: '1-5', quantidade: 5, inicial: 1 },
+    { label: '6º ao 10º', value: '6-10', quantidade: 5, inicial: 6 }
+]
+
 export interface RifaModelo {
     id: number
     tipo: string

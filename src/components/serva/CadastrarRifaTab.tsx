@@ -8,6 +8,8 @@ import { Button } from '@components/ui/button'
 import CustomSelect from '@components/CustomCombobox'
 import { NumericFormat } from 'react-number-format'
 import Link from 'next/link'
+import { horarios } from '@common/data'
+import { Trash } from 'lucide-react'
 
 interface IdLabel {
     id: number
@@ -18,6 +20,7 @@ interface Premiacao {
     ordem: number
     valor: string
     descricao: string
+    horario: string
 }
 
 interface CadastrarRifaTabProps {
@@ -40,7 +43,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
     const [quantidadeNumerosPorBilhete, setQuantidadeNumerosPorBilhete] = useState('')
     const [cambistaList, setCambistaList] = useState<IdLabel[]>([])
     const [cambistasSelecionados, setCambistasSelecionados] = useState<IdLabel[]>([])
-    const [premiacaoList, setPremiacaoList] = useState<Premiacao[]>([{ ordem: 1, valor: '', descricao: '' }])
+    const [premiacaoList, setPremiacaoList] = useState<Premiacao[]>([{ ordem: 1, valor: '', descricao: '', horario: '' }])
     const { showLoader, hideLoader } = useAppContext()
     const [rifaIdCriada, setRifaIdCriada] = useState<number | null>(null)
 
@@ -58,7 +61,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
 
     const adicionarPremiacao = () => {
         if (premiacaoList.length >= 10) return toast.error('Máximo de 10 premiações')
-        setPremiacaoList([...premiacaoList, { ordem: premiacaoList.length + 1, valor: '', descricao: '' }])
+        setPremiacaoList([...premiacaoList, { ordem: premiacaoList.length + 1, valor: '', descricao: '', horario: '' }])
     }
 
     const removerPremiacao = (index: number) => {
@@ -69,7 +72,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
     }
 
     // <<< Fix do TS: restringe o campo para 'valor' | 'descricao' >>>
-    const atualizarPremiacao = (index: number, campo: 'valor' | 'descricao', valor: string) => {
+    const atualizarPremiacao = (index: number, campo: 'valor' | 'descricao' | 'horario', valor: string) => {
         setPremiacaoList(prev =>
             prev.map((p, i) => (i === index ? { ...p, [campo]: valor } : p))
         )
@@ -146,7 +149,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
         setQuantidadeBilhetesTalao('')
         setQuantidadeNumerosPorBilhete('')
         setCambistasSelecionados([])
-        setPremiacaoList([{ ordem: 1, valor: '', descricao: '' }])
+        setPremiacaoList([{ ordem: 1, valor: '', descricao: '', horario: '' }])
     }
 
     return (
@@ -240,6 +243,15 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                             className="w-36 flex-1"
                         />
 
+                        <CustomSelect
+                            options={horarios}
+                            value={horarios.find(h => h.value === premio.horario) || null}
+                            onChange={(v: any) => atualizarPremiacao(idx, 'horario', v?.value || '')}
+                            placeholder="Horário"
+                            getOptionLabel={(option) => option.label}
+                            getOptionValue={(option) => option.value}
+                        />
+
                         <Button
                             type="button"
                             variant="outline"
@@ -247,7 +259,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                             disabled={premiacaoList.length <= 1}
                             className="ml-auto"
                         >
-                            Remover
+                            <Trash/>
                         </Button>
                     </div>
                 ))}

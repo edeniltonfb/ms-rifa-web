@@ -11,17 +11,10 @@ import { useAppContext } from 'src/contexts/AppContext'
 import CustomSelect from '@components/CustomSelect'
 import { Separator } from '@components/ui/separator'
 import { RifaCard } from '@components/ResultadoRifaCard'
-import { CadastroResultado, Rifa } from '@common/data'
+import { CadastroResultado, faixas, horarios, Rifa } from '@common/data'
 
-const horarios = [
-    { label: 'Federal', value: 'FED' },
-    { label: '19hs Bahia', value: '19B' }
-]
 
-const faixas = [
-    { label: '1º ao 5º', value: '1-5', quantidade: 5, inicial: 1 },
-    { label: '6º ao 10º', value: '6-10', quantidade: 5, inicial: 6 }
-]
+
 
 /*function RifaCard({ rifa }: { rifa: Rifa }) {
     return (
@@ -94,9 +87,9 @@ export default function CadastroEdicaoResultadoPage() {
     }
 
     const validarNumeros = () => {
-        if (numeros.length !== faixa?.quantidade && numeros.length > 0) {alert ('eita'); return false}
+        if (numeros.length !== faixa?.quantidade && numeros.length > 0) {return false}
         const tamanho = numeros[0]?.length
-        return numeros.every(n => (n.length === tamanho || n.length === 0) && (tamanho === 4 || tamanho === 5 || tamanho === 0))
+        return numeros.every(n => (n.length === tamanho || n.length === 4 || n.length === 5) && (tamanho === 4 || tamanho === 5 || tamanho === 0))
     }
 
     const salvarResultado = async () => {
