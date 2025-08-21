@@ -4,9 +4,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Users, Settings, ChevronDown, ChevronRight, Moon, Sun, LogOutIcon, UserPlus, User2, Printer, Paperclip, Edit2Icon, Edit2, Edit, Send } from 'lucide-react'
+import { Home, Users, Moon, Sun, LogOutIcon, User2, Printer, Edit, Send } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from 'src/contexts/AuthContext'
 
 export default function Sidebar({
