@@ -1,23 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@components/ui/button'
 import Select from 'react-select'
 import { Input } from '@components/ui/input'
 import Modal from './Modal'
 import { toast } from 'react-toastify'
 import instance from '@lib/axios'
-import { Rifa } from '@common/data'
+import { Rifa, situacoes } from '@common/data'
 import { useAppContext } from 'src/contexts/AppContext'
-
-const situacoes = [
-    { label: 'Indefinido', value: 'IND' },
-    { label: 'Vendido', value: 'VDD' },
-    { label: 'Não Vendido', value: 'NVD' },
-    { label: 'Não Pago', value: 'NPG' }
-]
 
 export function RifaCard({ rifa }: { rifa: Rifa }) {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [premiacaoData, setPremiacaoData] = useState(
+    const [premiacaoData, setPremiacaoData] = useState(() =>
         rifa.itemPremiacaoList.map(item => {
             const situacaoObj = situacoes.find(s => s.value === item.situacao);
             return {
@@ -27,6 +20,17 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
         })
     );
 
+    useEffect(() => {
+        setPremiacaoData(
+            rifa.itemPremiacaoList.map(item => {
+                const situacaoObj = situacoes.find(s => s.value === item.situacao);
+                return {
+                    ...item,
+                    situacao: situacaoObj || { label: 'Indefinido', value: 'IND' }
+                };
+            })
+        );
+    }, [rifa]);
 
 
     const { loading, showLoader, hideLoader } = useAppContext();
@@ -41,6 +45,13 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
         const updated = [...premiacaoData]
         updated[idx].cidadeApostador = value
         setPremiacaoData(updated)
+    }
+
+    const openModal = async () => {
+
+
+        setIsModalOpen(true);
+
     }
 
     const handleSalvar = async () => {
@@ -77,7 +88,12 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             showLoader();
             const res = await instance.post('/registrardadospremiacao', body)
             if (res.data.success) {
-                toast.success('Rifa finalizada com sucesso!')
+                if (res.data.data) {
+                    toast.success('Rifa finalizada com sucesso!')
+                } else {
+                    toast.success('Dados salvos. A rifa ainda não foi finalizada')
+                }
+
                 setIsModalOpen(false)
             } else {
                 toast.error(res.data.errorMessage || 'Erro ao finalizar')
@@ -110,7 +126,8 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
                 <Modal onClose={() => setIsModalOpen(false)} title={`Finalizar - ${rifa.empresa}`}>
                     <div className="space-y-1 px-2">
                         {premiacaoData.map((item, idx) => (
-                            <div key={idx} className="grid grid-cols-3 border rounded p-2 items-center space-x-2 bg-gray-50 dark:bg-gray-800">
+
+                            <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 border rounded p-2 items-center space-x-2 space-y-1 bg-gray-50 dark:bg-gray-800">
                                 <div className="text-3xl font-bold text-center">{item.numero}</div>
                                 <div>
                                     <Select

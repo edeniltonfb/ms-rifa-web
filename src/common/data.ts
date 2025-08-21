@@ -14,6 +14,13 @@ export const faixas = [
     { label: '6º ao 10º', value: '6-10', quantidade: 5, inicial: 6 }
 ]
 
+export const situacoes = [
+    { label: 'Indefinido', value: 'IND' },
+    { label: 'Vendido', value: 'VDD' },
+    { label: 'Não Vendido', value: 'NVD' },
+    { label: 'Não Pago', value: 'NPG' }
+]
+
 export interface RifaModelo {
     id: number
     tipo: string

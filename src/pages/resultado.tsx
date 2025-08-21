@@ -37,16 +37,15 @@ import { CadastroResultado, faixas, horarios, Rifa } from '@common/data'
 export default function CadastroEdicaoResultadoPage() {
     const [dataResultado, setDataResultado] = useState(dayjs().format('YYYY-MM-DD'))
     const [horario, setHorario] = useState<{ label: string, value: string } | null>(null)
-    const [faixa, setFaixa] = useState<{ label: string, value: string, quantidade: number, inicial: number } | null>(null)
     const [numeros, setNumeros] = useState<string[]>([])
     const [rifas, setRifas] = useState<Rifa[]>([])
     const { showLoader, hideLoader } = useAppContext();
 
     useEffect(() => {
-        if (horario && faixa && dataResultado) {
+        if (horario && dataResultado) {
             buscarResultado()
         }
-    }, [horario, faixa, dataResultado])
+    }, [horario, dataResultado])
 
     const buscarResultado = async () => {
 
@@ -56,14 +55,13 @@ export default function CadastroEdicaoResultadoPage() {
                 params: {
                     horario: horario?.value,
                     dataResultado,
-                    faixa:faixa?.value,
                 }
             })
 
             if (res.data.success && res.data.data) {
                 const resultado = res.data.data as CadastroResultado
                 const novosNumeros = []
-                for (let i = faixa!.inicial; i < faixa!.quantidade + faixa!.inicial; i++) {
+                for (let i = 1; i <= 10; i++) {
                     novosNumeros.push(resultado[`_${i}Premio`] as string || '')
                 }
                 setNumeros(novosNumeros)
@@ -87,10 +85,28 @@ export default function CadastroEdicaoResultadoPage() {
     }
 
     const validarNumeros = () => {
-        if (numeros.length !== faixa?.quantidade && numeros.length > 0) {return false}
-        const tamanho = numeros[0]?.length
-        return numeros.every(n => (n.length === tamanho || n.length === 4 || n.length === 5) && (tamanho === 4 || tamanho === 5 || tamanho === 0))
-    }
+        if (numeros.length !== 10 && numeros.length > 0) {
+            return false;
+        }
+
+        // Divide em dois subarrays com base no primeiro dígito
+        const grupo1 = numeros.filter(n => n[0] >= '0' && n[0] <= '4');
+        const grupo2 = numeros.filter(n => n[0] >= '5' && n[0] <= '9');
+
+        // Função auxiliar de validação
+        const validarGrupo = (grupo: string[]) => {
+            if (grupo.length === 0) return true; // se não houver elementos, ok
+            const tamanho = grupo[0].length;
+            return grupo.every(n =>
+                (n.length === tamanho || n.length === 4 || n.length === 5) &&
+                (tamanho === 4 || tamanho === 5 || tamanho === 0)
+            );
+        };
+
+        // valida os dois grupos
+        return validarGrupo(grupo1) && validarGrupo(grupo2);
+    };
+
 
     const salvarResultado = async () => {
         if (!validarNumeros()) {
@@ -101,20 +117,20 @@ export default function CadastroEdicaoResultadoPage() {
         const body: any = {
             horario: horario?.value,
             data: dayjs(dataResultado).format('DD/MM/YYYY'),
-            faixa:faixa?.value,
         }
 
         numeros.forEach((num, idx) => {
-            body[`_${idx + faixa!.inicial}Premio`] = num
+            body[`_${idx + 1}Premio`] = num
         })
 
         try {
             showLoader();
             const res = await instance.post('/salvarresultado', body)
-            if (res.data.success) { 
+            if (res.data.success) {
                 const resultado = res.data.data as CadastroResultado
-                toast.success('Resultado salvo com sucesso') 
+                toast.success('Resultado salvo com sucesso')
                 setRifas(Array.isArray(resultado.rifaList) ? resultado.rifaList : [])
+                console.log(rifas)
             }
             else { toast.error(res.data.errorMessage) }
         } catch {
@@ -126,7 +142,7 @@ export default function CadastroEdicaoResultadoPage() {
 
     const limparCampos = () => {
 
-        setNumeros(faixa ? Array(faixa.quantidade).fill('') : [])
+        setNumeros(Array(10).fill(''))
     }
 
     return (
@@ -143,32 +159,18 @@ export default function CadastroEdicaoResultadoPage() {
                     />
                 </div>
 
-                <div className="flex-1 min-w-[150px]">
-                    <CustomSelect
-                        label="Faixa"
-                        options={faixas}
-                        value={faixa}
-                        onChange={(v: any) => {
-                            setFaixa(v)
-                            setNumeros(Array(v?.quantidade || 0).fill(''))
-                        }}
-                    />
-
-                </div>
             </div>
 
-            {faixa && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-10 gap-2">
-                    {numeros.map((numero, idx) => (
-                        <NumeroInput
-                            key={idx}
-                            value={numero}
-                            onChange={(val) => handleNumeroChange(val, idx)}
-                            label={`${idx + faixa!.inicial}º Prêmio`}
-                        />
-                    ))}
-                </div>
-            )}
+            <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-10 gap-2">
+                {numeros.map((numero, idx) => (
+                    <NumeroInput
+                        key={idx}
+                        value={numero}
+                        onChange={(val) => handleNumeroChange(val, idx)}
+                        label={`${idx + 1}º Prêmio`}
+                    />
+                ))}
+            </div>
 
             <div className="flex gap-4">
                 <Button onClick={salvarResultado}>Salvar</Button>
