@@ -39,6 +39,30 @@ export interface IdLabel {
     label: string
 }
 
+export interface IdTitleSubtitle {
+    id: number
+    title: string
+    subtitle: string
+}
+
+export interface Talao {
+    id: number
+    titulo: string
+    subtitulo: string
+    numeros: string[]
+}
+
+export interface GenericPageableResponseTO<T> {
+  success: boolean
+  errorMessage: string | null
+  data: {
+    content: T[]
+    totalPages: number
+    totalElements: number
+    number: number
+  }
+}
+
 export interface AppContextType {
 
     loading: boolean;

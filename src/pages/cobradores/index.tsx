@@ -6,6 +6,7 @@ import { Button } from 'src/components/ui/button'
 import instance from '@lib/axios'
 import { Input } from '@components/ui/input'
 import { useAppContext } from 'src/contexts/AppContext'
+import { GenericPageableResponseTO } from '@common/data'
 
 interface Cobrador {
   id: number
@@ -15,17 +16,6 @@ interface Cobrador {
   whatsapp: string
   comissao: number
   ativo: boolean
-}
-
-interface GenericPageableResponseTO<T> {
-  success: boolean
-  errorMessage: string | null
-  data: {
-    content: T[]
-    totalPages: number
-    totalElements: number
-    number: number
-  }
 }
 
 export default function CobradoresListPage() {

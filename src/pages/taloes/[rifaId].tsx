@@ -9,14 +9,12 @@ import { toast } from 'react-toastify'
 import { Separator } from '@components/ui/separator'
 import Modal from '@components/Modal'
 import { GenericPageableResponseTO, IdTitleSubtitle, Talao } from '@common/data'
-import { Link } from 'lucide-react'
 
 export default function TaloesPage() {
   const router = useRouter()
   const { empresaId, rifaId } = router.query
   const { loading, showLoader, hideLoader } = useAppContext()
 
-  const [taloes, setTaloes] = useState<IdTitleSubtitle[]>([])
   const [page, setPage] = useState(0)
   const [size] = useState(10)
   const [totalPages, setTotalPages] = useState(0)
@@ -146,7 +144,7 @@ export default function TaloesPage() {
                 <td colSpan={7} className="text-center p-4">Nenhum cobrador encontrado.</td>
               </tr>
             ) : (
-              data.content.map((c) => (
+              data.content.map((c:any) => (
                 <tr key={c.id} className="border-t hover:bg-gray-100 dark:hover:bg-gray-800">
                   <td className="p-2">{c.titulo}</td>
                   <td className="p-2">{c.subtitulo}</td>
