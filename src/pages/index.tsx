@@ -25,7 +25,7 @@ interface Rifa {
   quantidadeNumeros: number
   quantidadeNumerosPorBilhete: number
   empresaId: number
-  descricao:string
+  descricao: string
 }
 
 interface EmpresaDashboard {
@@ -93,12 +93,12 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 ">
                   {empresa.rifaModeloList.map((modelo) => (
 
-                    <Card key={modelo.id} className="p-4 border-gray-400">
-                      <Link href={`/rifamodelo/${empresa.empresaId}/${modelo.id}`}>
+                    <Link href={`/rifamodelo/${empresa.empresaId}/${modelo.id}`}>
+                      <Card key={modelo.id} className="p-4 border-gray-400">
                         <h3 className="text-2xl  font-bold">{modelo.tipo}</h3>
                         <p className="text-lg font-semibold">{modelo.descricao}</p>
-                      </Link>
-                    </Card>
+                      </Card>
+                    </Link>
 
                   ))}
                 </div>

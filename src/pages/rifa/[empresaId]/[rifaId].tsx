@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
-import { Card, CardContent } from '@components/ui/card'
+import { Card } from '@components/ui/card'
 import { Button } from '@components/ui/button'
 import instance from '@lib/axios'
 import { toast } from 'react-toastify'
@@ -13,6 +13,7 @@ import { SingleValue } from 'react-select'
 import { useAppContext } from 'src/contexts/AppContext'
 import { useBilhetesFetcher } from '@hooks/useBilhetesFetcher'
 import DynamicBilheteResult from '@components/DynamicBilheteResult'
+import Link from 'next/link'
 
 interface RifaInfo {
     id: number;
@@ -148,6 +149,7 @@ export default function RifaPage() {
                 <Button className="bg-blue-600 text-white w-[120px]">Conferência</Button>
                 {/*<Button className="bg-blue-600 text-white">Conf por Vendedor...</Button>*/}
                 <Button className="bg-blue-600 text-white w-[120px]">Vales</Button>
+                 <Button className="bg-blue-600 text-white w-[120px]"><Link href={`/taloes/${rifaId}`}>Taloes</Link></Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
