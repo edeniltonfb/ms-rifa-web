@@ -93,8 +93,8 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 ">
                   {empresa.rifaModeloList.map((modelo) => (
 
-                    <Link href={`/rifamodelo/${empresa.empresaId}/${modelo.id}`}>
-                      <Card key={modelo.id} className="p-4 border-gray-400">
+                    <Link key={modelo.id} href={`/rifamodelo/${empresa.empresaId}/${modelo.id}`}>
+                      <Card className="p-4 border-gray-400">
                         <h3 className="text-2xl  font-bold">{modelo.tipo}</h3>
                         <p className="text-lg font-semibold">{modelo.descricao}</p>
                       </Card>
@@ -108,12 +108,14 @@ export default function DashboardPage() {
                 <h2 className="text-xl font-bold mb-4">Rifas</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {empresa.rifaList.map((rifa) => (
-                    <Card key={rifa.id} className="p-4 border-green-400">
-                      <Link href={`/rifa/${empresa.empresaId}/${rifa.id}`}>
+                    <Link key={rifa.id} href={`/rifa/${empresa.empresaId}/${rifa.id}`}>
+                      <Card className="p-4 border-green-400">
+
                         <h3 className="text-2xl  font-bold">{rifa.dataSorteio}</h3>
                         <p className="text-lg font-semibold">{rifa.descricao}</p>
-                      </Link>
-                    </Card>
+
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               </div>
