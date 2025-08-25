@@ -14,6 +14,7 @@ import { useAppContext } from 'src/contexts/AppContext'
 import { useBilhetesFetcher } from '@hooks/useBilhetesFetcher'
 import DynamicBilheteResult from '@components/DynamicBilheteResult'
 import Link from 'next/link'
+import { CheckCircle } from 'lucide-react'
 
 interface RifaInfo {
     id: number;
@@ -26,6 +27,7 @@ interface RifaInfo {
     complemento: number
     total: number
     modalidadeVenda: string
+    quantidadeDigitos?: number
 }
 
 interface IdLabel {
@@ -154,7 +156,9 @@ export default function RifaPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <Input
-                    placeholder="Número"
+                    type="number"
+                    inputMode="numeric"
+                    placeholder={`${info?.quantidadeDigitos?? 4} dígitos`}
                     value={numero}
                     onChange={(e) => setNumero(e.target.value)}
                     onKeyDown={(e) => {
@@ -162,8 +166,17 @@ export default function RifaPage() {
                             fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
                         }
                     }}
-
+                    maxLength={info?.quantidadeDigitos?? 4}
+                    className="text-xl w-[100px] text-center font-bold p-1"
                 />
+
+                {/* Botão visível só no mobile */}
+                <Button
+                    onClick={() => fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })}
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                >
+                    <CheckCircle></CheckCircle>
+                </Button>
 
                 <CustomSelect<IdLabel>
                     options={vendedores}
