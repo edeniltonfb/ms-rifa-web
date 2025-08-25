@@ -112,7 +112,8 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap gap-4">
-                <Input
+
+                {/*<Input
                     className='text-xl w-[100px] text-center text-bold p-1'
                     placeholder={`${quantidadeDigitos || 4} dígitos`}
                     value={numero}
@@ -121,6 +122,22 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             consultarNumero()
+                        }
+                    }}
+                />*/}
+
+                <Input
+                    type="text"
+                    inputMode="numeric" // força teclado numérico no celular
+                    className="text-xl w-[100px] text-center font-bold p-1"
+                    placeholder={`${quantidadeDigitos || 4} dígitos`}
+                    value={numero}
+                    onChange={(e) => handleNumeroChange(e.target.value)}
+                    maxLength={quantidadeDigitos || 4}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault(); // impede submit ou quebra de linha
+                            consultarNumero();
                         }
                     }}
                 />

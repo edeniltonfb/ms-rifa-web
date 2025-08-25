@@ -67,7 +67,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
         if (v) fetchServas((v as SingleValue<IdLabel>)!.id)
     }
 
-    
+
 
     const handleSubmit = async () => {
         if (numero.length !== quantidadeDigitos || !vendedorSelecionado) return
@@ -129,12 +129,19 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
         <div className="space-y-6">
             <div className="flex flex-wrap gap-4">
                 <Input
+                    type="number"
+                    inputMode="numeric"
                     placeholder={`${quantidadeDigitos} dígitos`}
                     value={numero}
                     onChange={(e: any) => handleChange(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault(); // evita submit ou quebra de linha
+                            handleKeyDown(e);   // chama sua função
+                        }
+                    }}
                     maxLength={quantidadeDigitos}
-                    className='text-xl w-[100px] text-center text-bold p-1'
+                    className="text-xl w-[100px] text-center font-bold p-1"
                 />
 
                 <CustomSelect<IdLabel>
