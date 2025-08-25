@@ -14,6 +14,7 @@ import * as Slider from '@radix-ui/react-slider';
 import { Dialog as HeadlessDialog, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { useAuth } from 'src/contexts/AuthContext';
 import instance from '@lib/axios';
+import { Button } from '@components/ui/button';
 
 
 // --- Constantes ---
@@ -142,63 +143,63 @@ const Builder: React.FC = () => {
                 quantidade: quantityApiValue,
             },
         })
-        .then((res) => {
-            if (res.data.success && res.data.data) {
-                const data = res.data.data;
-                const currentPanelWidth = data.orientacao === 'RETRATO' ? A4_PORTRAIT_WIDTH : A4_PORTRAIT_HEIGHT;
-                const currentPanelHeight = data.orientacao === 'RETRATO' ? A4_PORTRAIT_HEIGHT : A4_PORTRAIT_WIDTH;
-                const calculatedNumElements = data.quantidade * 2;
+            .then((res) => {
+                if (res.data.success && res.data.data) {
+                    const data = res.data.data;
+                    const currentPanelWidth = data.orientacao === 'RETRATO' ? A4_PORTRAIT_WIDTH : A4_PORTRAIT_HEIGHT;
+                    const currentPanelHeight = data.orientacao === 'RETRATO' ? A4_PORTRAIT_HEIGHT : A4_PORTRAIT_WIDTH;
+                    const calculatedNumElements = data.quantidade * 2;
 
-                setPanelConfig({
-                    numElements: calculatedNumElements,
-                    orientation: data.orientacao.toLowerCase() as 'retrato' | 'paisagem',
-                    panelWidth: currentPanelWidth,
-                    panelHeight: currentPanelHeight,
-                });
+                    setPanelConfig({
+                        numElements: calculatedNumElements,
+                        orientation: data.orientacao.toLowerCase() as 'retrato' | 'paisagem',
+                        panelWidth: currentPanelWidth,
+                        panelHeight: currentPanelHeight,
+                    });
 
-                const loadedTransforms: Record<string, Transform> = {};
-                for (let i = 1; i <= data.quantidade; i++) {
-                    const xCanhoto = data[`xCanhoto${i}`];
-                    const yCanhoto = data[`yCanhoto${i}`];
-                    const xBilhete = data[`xBilhete${i}`];
-                    const yBilhete = data[`yBilhete${i}`];
+                    const loadedTransforms: Record<string, Transform> = {};
+                    for (let i = 1; i <= data.quantidade; i++) {
+                        const xCanhoto = data[`xCanhoto${i}`];
+                        const yCanhoto = data[`yCanhoto${i}`];
+                        const xBilhete = data[`xBilhete${i}`];
+                        const yBilhete = data[`yBilhete${i}`];
 
-                    if (typeof xCanhoto === 'number' && typeof yCanhoto === 'number' &&
-                        typeof xBilhete === 'number' && typeof yBilhete === 'number') {
+                        if (typeof xCanhoto === 'number' && typeof yCanhoto === 'number' &&
+                            typeof xBilhete === 'number' && typeof yBilhete === 'number') {
 
-                        const canhotoElementId = `item-${2 * (i - 1)}`;
-                        const bilheteElementId = `item-${2 * (i - 1) + 1}`;
+                            const canhotoElementId = `item-${2 * (i - 1)}`;
+                            const bilheteElementId = `item-${2 * (i - 1) + 1}`;
 
-                        loadedTransforms[canhotoElementId] = {
-                            x: Math.round(xCanhoto),
-                            y: Math.round(yCanhoto),
-                            scaleX: 1,
-                            scaleY: 1,
-                        };
-                        loadedTransforms[bilheteElementId] = {
-                            x: Math.round(xBilhete),
-                            y: Math.round(yBilhete),
-                            scaleX: 1,
-                            scaleY: 1,
-                        };
-                    } else {
-                        console.warn(`Dados de posição incompletos ou inválidos para o par ${i}.`);
+                            loadedTransforms[canhotoElementId] = {
+                                x: Math.round(xCanhoto),
+                                y: Math.round(yCanhoto),
+                                scaleX: 1,
+                                scaleY: 1,
+                            };
+                            loadedTransforms[bilheteElementId] = {
+                                x: Math.round(xBilhete),
+                                y: Math.round(yBilhete),
+                                scaleX: 1,
+                                scaleY: 1,
+                            };
+                        } else {
+                            console.warn(`Dados de posição incompletos ou inválidos para o par ${i}.`);
+                        }
                     }
+                    setItemTransforms(loadedTransforms);
+                    enqueueSnackbar('Layout carregado com sucesso!', { variant: 'success' });
+                    setIsModalOpen(false);
+                } else {
+                    enqueueSnackbar(res.data.errorMessage || 'Erro ao carregar layout: Dados inválidos.', { variant: 'error' });
                 }
-                setItemTransforms(loadedTransforms);
-                enqueueSnackbar('Layout carregado com sucesso!', { variant: 'success' });
-                setIsModalOpen(false);
-            } else {
-                enqueueSnackbar(res.data.errorMessage || 'Erro ao carregar layout: Dados inválidos.', { variant: 'error' });
-            }
-        })
-        .catch((error) => {
-            console.error('Erro na chamada da API de carregar layout:', error);
-            enqueueSnackbar('Não foi possível conectar ao servidor para carregar o layout.', { variant: 'error' });
-        })
-        .finally(() => {
-            setIsFetchingLayout(false);
-        });
+            })
+            .catch((error) => {
+                console.error('Erro na chamada da API de carregar layout:', error);
+                enqueueSnackbar('Não foi possível conectar ao servidor para carregar o layout.', { variant: 'error' });
+            })
+            .finally(() => {
+                setIsFetchingLayout(false);
+            });
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -366,9 +367,8 @@ const Builder: React.FC = () => {
                                 <input
                                     type="text"
                                     id="codigo-input"
-                                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-3xl px-3 py-1 text-blue-900 ${
-                                        codigo.length > 0 && codigo.length !== 5 ? 'border-red-500' : ''
-                                    }`}
+                                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-3xl px-3 py-1 text-blue-900 ${codigo.length > 0 && codigo.length !== 5 ? 'border-red-500' : ''
+                                        }`}
                                     value={codigo}
                                     onChange={(e) => setCodigo(e.target.value)}
                                     maxLength={5}
@@ -451,35 +451,29 @@ const Builder: React.FC = () => {
                             </DialogTitle>
 
                             <div className="mt-2">
-                                <label htmlFor="num-positions-slider" className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-medium text-gray-700">
                                     Quantidade de Posições (1 a 8)
                                 </label>
-                                <Slider.Root
-                                    className="relative flex items-center select-none touch-none w-full h-5 mt-2"
-                                    defaultValue={[numPositions]}
-                                    value={[numPositions]}
-                                    onValueChange={handleSliderChange}
-                                    max={8}
-                                    step={1}
-                                    min={1}
-                                    aria-label="Número de posições"
-                                >
-                                    <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
-                                        <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />
-                                    </Slider.Track>
-                                    <Slider.Thumb
-                                        className="block w-5 h-5 bg-white shadow-[0_2px_10px] shadow-blackA4 rounded-[10px] hover:bg-violet3 focus:outline-none focus:shadow-[0_0_0_5px] focus:shadow-blackA5"
-                                        aria-label="Valor do slider"
-                                    >
-                                        <div className="absolute top-[-25px] left-1/2 -translate-x-1/2 text-sm text-gray-600 font-semibold">
-                                            {numPositions}
-                                        </div>
-                                    </Slider.Thumb>
-                                </Slider.Root>
+
+                                <div className="grid grid-cols-4 gap-2 mt-2">
+                                    {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                                        <Button
+                                            key={n}
+                                            type="button"
+                                            variant={numPositions === n ? "default" : "outline"}
+                                            onClick={() => setNumPositions(n)}
+                                            className="w-12"
+                                        >
+                                            {n}
+                                        </Button>
+                                    ))}
+                                </div>
+
                                 <p className="mt-2 text-sm text-gray-500">
                                     Serão {numPositions * 2} elementos arrastáveis.
                                 </p>
                             </div>
+
 
                             <fieldset className="mt-6">
                                 <legend className="text-base font-medium text-gray-900">Orientação</legend>

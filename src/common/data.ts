@@ -73,6 +73,8 @@ export interface AppContextType {
 export interface Premiacao {
     ordem: number;
     descricao: string;
+    valor: number;
+    horario:string;
 }
 
 export type Resultado = {
