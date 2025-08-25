@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
 import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
-import Select, { ActionMeta, SingleValue } from 'react-select'
+import {SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
-import { IdLabel, RifaModelo, Serva } from '@common/data'
+import { IdLabel, Serva } from '@common/data'
 import CustomSelect from '@components/CustomCombobox'
 import { Button } from '@headlessui/react'
 import { CheckCircle } from 'lucide-react'
@@ -146,7 +146,7 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                 {/* Botão visível só no mobile */}
                 <Button
                     onClick={consultarNumero}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
                 >
                     <CheckCircle></CheckCircle>
                 </Button>

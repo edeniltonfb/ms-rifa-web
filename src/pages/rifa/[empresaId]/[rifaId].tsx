@@ -15,12 +15,13 @@ import { useBilhetesFetcher } from '@hooks/useBilhetesFetcher'
 import DynamicBilheteResult from '@components/DynamicBilheteResult'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
+import { Premiacao } from '@common/data'
 
 interface RifaInfo {
     id: number;
     empresa: string
     dataSorteio: string
-    situacao:string
+    situacao: string
     tipo: string
     servas: number
     avulsos: number
@@ -28,6 +29,7 @@ interface RifaInfo {
     total: number
     modalidadeVenda: string
     quantidadeDigitos?: number
+    premiacaoList: Premiacao[]
 }
 
 interface IdLabel {
@@ -68,7 +70,7 @@ export default function RifaPage() {
             instance.get(`/listartalaoidlabel?rifaId=${rifaId}`).then(res => {
                 if (res.data.success) setTaloes(res.data.data)
             })
-        hideLoader();
+            hideLoader();
         }
     }, [rifaId, empresaId])
 
@@ -151,14 +153,14 @@ export default function RifaPage() {
                 <Button className="bg-blue-600 text-white w-[120px]">Conferência</Button>
                 {/*<Button className="bg-blue-600 text-white">Conf por Vendedor...</Button>*/}
                 <Button className="bg-blue-600 text-white w-[120px]">Vales</Button>
-                 <Button className="bg-blue-600 text-white w-[120px]"><Link href={`/taloes/${rifaId}`}>Taloes</Link></Button>
+                <Button className="bg-blue-600 text-white w-[120px]"><Link href={`/taloes/${rifaId}`}>Taloes</Link></Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <Input
                     type="number"
                     inputMode="numeric"
-                    placeholder={`${info?.quantidadeDigitos?? 4} dígitos`}
+                    placeholder={`${info?.quantidadeDigitos ?? 4} dígitos`}
                     value={numero}
                     onChange={(e) => setNumero(e.target.value)}
                     onKeyDown={(e) => {
@@ -166,14 +168,14 @@ export default function RifaPage() {
                             fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
                         }
                     }}
-                    maxLength={info?.quantidadeDigitos?? 4}
+                    maxLength={info?.quantidadeDigitos ?? 4}
                     className="text-xl w-[100px] text-center font-bold p-1"
                 />
 
                 {/* Botão visível só no mobile */}
                 <Button
                     onClick={() => fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
                 >
                     <CheckCircle></CheckCircle>
                 </Button>
@@ -198,13 +200,13 @@ export default function RifaPage() {
                     getOptionValue={(option) => String(option.id)}
                 />
 
-               
+
 
 
 
 
             </div>
-             <Separator></Separator>
+            <Separator></Separator>
             <DynamicBilheteResult mode={mode} data={data} />
 
             <div className='h-[150px]'></div>

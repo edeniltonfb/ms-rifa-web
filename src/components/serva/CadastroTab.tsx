@@ -149,7 +149,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
                 {/* Botão visível só no mobile */}
                 <Button
                     onClick={handleSubmit}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
                 >
                     <CheckCircle></CheckCircle>
                 </Button>
