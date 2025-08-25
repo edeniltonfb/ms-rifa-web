@@ -16,6 +16,7 @@ import DynamicBilheteResult from '@components/DynamicBilheteResult'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 import { Premiacao } from '@common/data'
+import Modal from '@components/Modal'
 
 interface RifaInfo {
     id: number;
@@ -53,6 +54,7 @@ export default function RifaPage() {
     const [numero, setNumero] = useState('')
     const { showLoader, hideLoader } = useAppContext()
     const { mode, data, fetchBilhetes } = useBilhetesFetcher()
+    const [openPremios, setOpenPremios] = useState(false) // controla o modal
 
     useEffect(() => {
 
@@ -154,6 +156,12 @@ export default function RifaPage() {
                 {/*<Button className="bg-blue-600 text-white">Conf por Vendedor...</Button>*/}
                 <Button className="bg-blue-600 text-white w-[120px]">Vales</Button>
                 <Button className="bg-blue-600 text-white w-[120px]"><Link href={`/taloes/${rifaId}`}>Taloes</Link></Button>
+                <Button
+                    className="bg-blue-600 text-white w-[120px]"
+                    onClick={() => setOpenPremios(true)} // abre o modal
+                >
+                    Prêmios...
+                </Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -209,7 +217,21 @@ export default function RifaPage() {
             </div>
             <Separator></Separator>
             <DynamicBilheteResult mode={mode} data={data} />
-
+            {/* Modal de Prêmios */}
+            {openPremios &&
+                <Modal onClose={() => setOpenPremios(false)} title="Premiações">
+                    <div className="space-y-2">
+                        {info?.premiacaoList?.map((p) => (
+                            <div key={p.ordem} className="border rounded p-2 flex flex-col gap-1">
+                                <div className="font-semibold">{p.ordem}º Prêmio</div>
+                                <div className="text-sm">{p.descricao}</div>
+                                <div className="text-sm">Horário: {p.horario}</div>
+                                <div className="text-sm font-bold">Valor: R$ {p.valor.toFixed(2)}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Modal>
+            }
             <div className='h-[150px]'></div>
         </div>
     )
