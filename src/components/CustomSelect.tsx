@@ -16,7 +16,6 @@ interface CustomSelectProps {
 function CustomSelect({ value, onChange, label, options }: CustomSelectProps) {
   const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(null)
 
-  // Só define document.body no cliente
   useEffect(() => {
     if (typeof document !== "undefined") {
       setMenuPortalTarget(document.body)
@@ -37,7 +36,10 @@ function CustomSelect({ value, onChange, label, options }: CustomSelectProps) {
           state.isFocused
             ? "dark:bg-gray-900 border-indigo-500 ring-2 ring-indigo-500"
             : "dark:bg-gray-900 dark:border-gray-700",
-        menu: () => "z-50 max-h-48 overflow-y-auto dark:bg-gray-900 dark:border-gray-700",
+        // menu sem overflow extra
+        menu: () => "z-50 dark:bg-gray-900 dark:border-gray-700",
+        // aqui sim controlamos o scroll
+        menuList: () => "max-h-48 overflow-y-auto",
         option: (state: any) =>
           state.isSelected
             ? "dark:bg-indigo-600 dark:text-white bg-indigo-600 text-white"
