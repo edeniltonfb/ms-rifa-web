@@ -9,6 +9,8 @@ import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, Serva } from '@common/data'
 import CustomSelect from '@components/CustomCombobox'
+import { Button } from '@headlessui/react'
+import { CheckCircle } from 'lucide-react'
 
 interface ResultadoCadastro {
     numero: string
@@ -143,6 +145,14 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
                     maxLength={quantidadeDigitos}
                     className="text-xl w-[100px] text-center font-bold p-1"
                 />
+
+                {/* Botão visível só no mobile */}
+                <Button
+                    onClick={handleSubmit}
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                >
+                    <CheckCircle></CheckCircle>
+                </Button>
 
                 <CustomSelect<IdLabel>
                     options={vendedores}

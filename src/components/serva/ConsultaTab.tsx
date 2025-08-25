@@ -9,6 +9,8 @@ import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, RifaModelo, Serva } from '@common/data'
 import CustomSelect from '@components/CustomCombobox'
+import { Button } from '@headlessui/react'
+import { CheckCircle } from 'lucide-react'
 
 
 interface ConsultaTabProps {
@@ -141,6 +143,13 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                         }
                     }}
                 />
+                {/* Botão visível só no mobile */}
+                <Button
+                    onClick={consultarNumero}
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded"
+                >
+                    <CheckCircle></CheckCircle>
+                </Button>
 
                 <CustomSelect<IdLabel>
                     options={vendedores}
