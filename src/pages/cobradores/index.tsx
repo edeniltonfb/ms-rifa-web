@@ -24,7 +24,7 @@ export default function CobradoresListPage() {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const [data, setData] = useState<GenericPageableResponseTO<Cobrador>["data"] | null>(null)
-  const {loading, showLoader, hideLoader} = useAppContext();
+  const { loading, showLoader, hideLoader } = useAppContext();
 
 
   const fetchData = async () => {
@@ -74,7 +74,7 @@ export default function CobradoresListPage() {
         <Input
           placeholder="Nome"
           value={nome}
-          onChange={(e:any) => setNome(e.target.value)}
+          onChange={(e: any) => setNome(e.target.value)}
         />
 
         <select
@@ -90,15 +90,15 @@ export default function CobradoresListPage() {
         <Button onClick={handleSearch}>Buscar</Button>
       </div>
 
-      <div className="overflow-x-scroll border rounded shadow-sm bg-white dark:bg-gray-900">
-        <table className="min-w-full text-sm">
+      <div className="overflow-x-auto border rounded shadow-sm bg-white dark:bg-gray-900">
+        <table className="hidden sm:table min-w-full text-sm">
           <thead className="bg-gray-200 dark:bg-gray-800">
             <tr>
               <th className="text-left p-2">Nome</th>
               <th className="text-left p-2">Login</th>
-              <th className="text-left p-2 ">Comissão</th>
-              <th className="text-left p-2 ">Email</th>
-              <th className="text-left p-2 ">WhatsApp</th>
+              <th className="text-left p-2">Comissão</th>
+              <th className="text-left p-2">Email</th>
+              <th className="text-left p-2">WhatsApp</th>
               <th className="text-left p-2">Status</th>
               <th className="text-left p-2">Ações</th>
             </tr>
@@ -122,9 +122,10 @@ export default function CobradoresListPage() {
                   <td className="p-2">{c.whatsapp}</td>
                   <td className="p-2">
                     <span
-                      className={`text-xs font-semibold px-2 py-1 rounded ${
-                        c.ativo ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                      }`}
+                      className={`text-xs font-semibold px-2 py-1 rounded ${c.ativo
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                        }`}
                     >
                       {c.ativo ? 'Ativo' : 'Inativo'}
                     </span>
@@ -139,7 +140,41 @@ export default function CobradoresListPage() {
             )}
           </tbody>
         </table>
+
+        {/* Mobile (cards) */}
+        <div className="sm:hidden divide-y">
+          {loading ? (
+            <div className="p-4 text-center">Carregando...</div>
+          ) : !data || data.content.length === 0 ? (
+            <div className="p-4 text-center">Nenhum cobrador encontrado.</div>
+          ) : (
+            data.content.map((c) => (
+              <div key={c.id} className="p-4 border-b bg-gray-50 dark:bg-gray-800">
+                <div className="font-bold text-lg mb-1">{c.nome}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300"><strong>Login:</strong> {c.login}</div>
+                <div className="text-sm"><strong>Comissão:</strong> {c.comissao?.toFixed(2)}%</div>
+                <div className="text-sm"><strong>Email:</strong> {c.email}</div>
+                <div className="text-sm"><strong>WhatsApp:</strong> {c.whatsapp}</div>
+                <div className="text-sm mb-2">
+                  <strong>Status:</strong>{' '}
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${c.ativo
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                      }`}
+                  >
+                    {c.ativo ? 'Ativo' : 'Inativo'}
+                  </span>
+                </div>
+                <Link href={`/cobradores/edit?id=${c.id}`}>
+                  <Button size="sm" className="w-full">Editar</Button>
+                </Link>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
 
       {data && data.totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-4">

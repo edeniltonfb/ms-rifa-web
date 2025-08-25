@@ -91,7 +91,8 @@ export default function VendedoresListPage() {
             </div>
 
             <div className="overflow-x-auto border rounded shadow-sm bg-white dark:bg-gray-900">
-                <table className="min-w-full text-sm">
+                {/* Tabela - visível em telas médias e grandes */}
+                <table className="hidden sm:table min-w-full text-sm">
                     <thead className="bg-gray-200 dark:bg-gray-800">
                         <tr>
                             <th className="text-left p-2">Nome</th>
@@ -114,8 +115,12 @@ export default function VendedoresListPage() {
                                 <td className="p-2">{v.whatsapp}</td>
                                 <td className="p-2">{v.cobradorNome}</td>
                                 <td className="p-2">
-                                    <span className={`text-xs font-semibold px-2 py-1 rounded ${v.ativo ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                                        }`}>
+                                    <span
+                                        className={`text-xs font-semibold px-2 py-1 rounded ${v.ativo
+                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                                            }`}
+                                    >
                                         {v.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </td>
@@ -128,7 +133,36 @@ export default function VendedoresListPage() {
                         ))}
                     </tbody>
                 </table>
+
+                {/* Mobile (cards) */}
+                <div className="sm:hidden divide-y">
+                    {data?.content.map((v) => (
+                        <div key={v.id} className="p-4 border-b bg-gray-50 dark:bg-gray-800">
+                            <div className="font-bold text-lg mb-1">{v.nome}</div>
+                            <div className="text-sm"><strong>Login:</strong> {v.login}</div>
+                            <div className="text-sm"><strong>Comissão:</strong> {v.comissao?.toFixed(2)}%</div>
+                            <div className="text-sm"><strong>Email:</strong> {v.email}</div>
+                            <div className="text-sm"><strong>WhatsApp:</strong> {v.whatsapp}</div>
+                            <div className="text-sm"><strong>Cobrador:</strong> {v.cobradorNome}</div>
+                            <div className="text-sm mb-2">
+                                <strong>Status:</strong>{' '}
+                                <span
+                                    className={`px-2 py-1 text-xs rounded ${v.ativo
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                                        }`}
+                                >
+                                    {v.ativo ? 'Ativo' : 'Inativo'}
+                                </span>
+                            </div>
+                            <Link href={`/vendedores/edit?id=${v.id}`}>
+                                <Button size="sm" className="w-full">Editar</Button>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
+
         </div>
     )
 }

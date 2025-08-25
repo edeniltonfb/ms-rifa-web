@@ -157,29 +157,30 @@ export default function RifaPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <Input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder={`${info?.quantidadeDigitos ?? 4} dígitos`}
-                    value={numero}
-                    onChange={(e) => setNumero(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && empresaIdStr && rifaIdStr) {
-                            fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
-                        }
-                    }}
-                    maxLength={info?.quantidadeDigitos ?? 4}
-                    className="text-xl w-[100px] text-center font-bold p-1"
-                />
+                <div className='flex flex-row space-x-1'>
+                    <Input
+                        type="number"
+                        inputMode="numeric"
+                        placeholder={`${info?.quantidadeDigitos ?? 4} dígitos`}
+                        value={numero}
+                        onChange={(e) => setNumero(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && empresaIdStr && rifaIdStr) {
+                                fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
+                            }
+                        }}
+                        maxLength={info?.quantidadeDigitos ?? 4}
+                        className="text-xl w-[100px] text-center font-bold p-1"
+                    />
 
-                {/* Botão visível só no mobile */}
-                <Button
-                    onClick={() => fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
-                >
-                    <CheckCircle></CheckCircle>
-                </Button>
-
+                    {/* Botão visível só no mobile */}
+                    <Button
+                        onClick={() => fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })}
+                        className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[47px]"
+                    >
+                        <CheckCircle></CheckCircle>
+                    </Button>
+                </div>
                 <CustomSelect<IdLabel>
                     options={vendedores}
                     value={vendedorSelecionado}

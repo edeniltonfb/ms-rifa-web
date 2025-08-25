@@ -130,6 +130,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap gap-4">
+                <div className='flex flex-row space-x-1'>
                 <Input
                     type="number"
                     inputMode="numeric"
@@ -149,63 +150,67 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
                 {/* Botão visível só no mobile */}
                 <Button
                     onClick={handleSubmit}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
+                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[47px]"
                 >
                     <CheckCircle></CheckCircle>
                 </Button>
-
-                <CustomSelect<IdLabel>
-                    options={vendedores}
-                    value={vendedorSelecionado}
-                    onChange={handleVendedorChange}
-                    isMulti={false}
-                    placeholder="Selecione um vendedor"
-                    getOptionLabel={(option) => option.label}
-                    getOptionValue={(option) => String(option.id)}
-                />
-
             </div>
+            <CustomSelect<IdLabel>
+                options={vendedores}
+                value={vendedorSelecionado}
+                onChange={handleVendedorChange}
+                isMulti={false}
+                placeholder="Selecione um vendedor"
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => String(option.id)}
+            />
 
-            {showResultPanel && (
-                <Card className={sucesso ? 'relative flex flex-col border border-green-300 bg-green-200 w-[300px]' : 'relative flex flex-col border border-red-300 bg-red-200 w-[300px]'}>
-                    {/* Botão de excluir */}
-                    <button
-                        className="absolute top-0 right-1 text-red-500 hover:text-red-700"
-                        onClick={() => handleRemoverNumero(resultado?.numero!)}
-                        title="Remover número"
-                    >
-                        ×
-                    </button>
-                    <CardContent className="p-4">
-                        <p className="text-lg font-medium">Número: <span className="font-mono text-xl">{resultado?.numero}</span></p>
-                        <p>Vendedor: {resultado?.vendedor}</p>
-                    </CardContent>
-                </Card>
-            )}
-
-            {servas.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                    {servas.map((s, idx) => (
-                        <Card
-                            key={idx}
-                            className="relative flex flex-col w-min h-min items-center justify-center"
-                        >
-                            {/* Botão de excluir */}
-                            <button
-                                className="absolute top-0 right-0 text-red-500 hover:text-red-700"
-                                onClick={() => handleRemoverNumero(s.numero)}
-                                title="Remover número"
-                            >
-                                ×
-                            </button>
-
-                            <CardContent className="text-center font-mono font-bold text-xl">
-                                {s.numero}
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
         </div>
+
+            {
+        showResultPanel && (
+            <Card className={sucesso ? 'relative flex flex-col border border-green-300 bg-green-200 w-[300px]' : 'relative flex flex-col border border-red-300 bg-red-200 w-[300px]'}>
+                {/* Botão de excluir */}
+                <button
+                    className="absolute top-0 right-1 text-red-500 hover:text-red-700"
+                    onClick={() => handleRemoverNumero(resultado?.numero!)}
+                    title="Remover número"
+                >
+                    ×
+                </button>
+                <CardContent className="p-4">
+                    <p className="text-lg font-medium">Número: <span className="font-mono text-xl">{resultado?.numero}</span></p>
+                    <p>Vendedor: {resultado?.vendedor}</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    {
+        servas.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+                {servas.map((s, idx) => (
+                    <Card
+                        key={idx}
+                        className="relative flex flex-col w-min h-min items-center justify-center"
+                    >
+                        {/* Botão de excluir */}
+                        <button
+                            className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+                            onClick={() => handleRemoverNumero(s.numero)}
+                            title="Remover número"
+                        >
+                            ×
+                        </button>
+
+                        <CardContent className="text-center font-mono font-bold text-xl">
+                            {s.numero}
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        )
+    }
+        </div >
     )
 }

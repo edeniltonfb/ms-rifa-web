@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Input } from '@components/ui/input'
 import { Card, CardContent } from '@components/ui/card'
 import { toast } from 'react-toastify'
-import {SingleValue } from 'react-select'
+import { SingleValue } from 'react-select'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
 import { IdLabel, Serva } from '@common/data'
@@ -127,30 +127,30 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                         }
                     }}
                 />*/}
-
-                <Input
-                    type="text"
-                    inputMode="numeric" // força teclado numérico no celular
-                    className="text-xl w-[100px] text-center font-bold p-1"
-                    placeholder={`${quantidadeDigitos || 4} dígitos`}
-                    value={numero}
-                    onChange={(e) => handleNumeroChange(e.target.value)}
-                    maxLength={quantidadeDigitos || 4}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault(); // impede submit ou quebra de linha
-                            consultarNumero();
-                        }
-                    }}
-                />
-                {/* Botão visível só no mobile */}
-                <Button
-                    onClick={consultarNumero}
-                    className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[30px]"
-                >
-                    <CheckCircle></CheckCircle>
-                </Button>
-
+                <div className='flex flex-row space-x-1'>
+                    <Input
+                        type="text"
+                        inputMode="numeric" // força teclado numérico no celular
+                        className="text-xl w-[100px] text-center font-bold p-1"
+                        placeholder={`${quantidadeDigitos || 4} dígitos`}
+                        value={numero}
+                        onChange={(e) => handleNumeroChange(e.target.value)}
+                        maxLength={quantidadeDigitos || 4}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault(); // impede submit ou quebra de linha
+                                consultarNumero();
+                            }
+                        }}
+                    />
+                    {/* Botão visível só no mobile */}
+                    <Button
+                        onClick={consultarNumero}
+                        className="sm:hidden bg-blue-600 text-white px-3 py-2 rounded w-[47px]"
+                    >
+                        <CheckCircle></CheckCircle>
+                    </Button>
+                </div>
                 <CustomSelect<IdLabel>
                     options={vendedores}
                     value={vendedorSelecionado}
