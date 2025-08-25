@@ -11,28 +11,7 @@ import { useAppContext } from 'src/contexts/AppContext'
 import CustomSelect from '@components/CustomSelect'
 import { Separator } from '@components/ui/separator'
 import { RifaCard } from '@components/ResultadoRifaCard'
-import { CadastroResultado, faixas, horarios, Rifa } from '@common/data'
-
-
-
-
-/*function RifaCard({ rifa }: { rifa: Rifa }) {
-    return (
-        <div className="border rounded-md shadow-sm p-4 bg-white dark:bg-gray-900 w-full sm:w-[30%] md:w-[30%] xl:w-[20%]">
-            <h3 className="font-bold text-lg mb-2">{rifa.empresa}</h3>
-            <p className="text-sm text-gray-500 mb-2">{rifa.data} - {rifa.horario}</p>
-            <div className="space-y-1">
-                {rifa.itemPremiacaoList.map((item, idx) => (
-                    <div key={idx} className="text-sm border p-2 rounded bg-gray-100 dark:bg-gray-800">
-                        <div className='text-[28px] pb-4 text-center'><strong>{item.numero}</strong> </div>
-                        <div><strong> {item.ordem}º - </strong>{item.descricao &&  <strong> {item.descricao}</strong>}</div>
-                        <div><strong> {item.talao} </strong>{item.vendedor &&  <strong> {item.vendedor}</strong>}</div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    )
-}*/
+import { CadastroResultado, horarios, Rifa } from '@common/data'
 
 export default function CadastroEdicaoResultadoPage() {
     const [dataResultado, setDataResultado] = useState(dayjs().format('YYYY-MM-DD'))
