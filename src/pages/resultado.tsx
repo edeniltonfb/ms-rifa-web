@@ -47,6 +47,7 @@ export default function CadastroEdicaoResultadoPage() {
                 setRifas(Array.isArray(resultado.rifaList) ? resultado.rifaList : [])
 
             } else {
+                setRifas([])
                 limparCampos()
             }
         } catch {
@@ -122,7 +123,7 @@ export default function CadastroEdicaoResultadoPage() {
     const limparCampos = () => {
 
         setNumeros(Array(10).fill(''))
-        setRifas([])
+        
     }
 
     return (
