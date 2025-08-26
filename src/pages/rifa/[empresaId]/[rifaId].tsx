@@ -55,14 +55,22 @@ export default function RifaPage() {
     const { showLoader, hideLoader } = useAppContext()
     const { mode, data, fetchBilhetes } = useBilhetesFetcher()
     const [openPremios, setOpenPremios] = useState(false) // controla o modal
+    const [quantidadeDigitos, setQuantidadeDigitos] = useState(4)
 
     useEffect(() => {
 
         if (rifaId && empresaId) {
             showLoader();
             instance.get(`/buscarrifa?empresaId=${empresaId}&rifaId=${rifaId}`).then(res => {
-                if (res.data.success) setInfo(res.data.data)
-                else toast.error(res.data.errorMessage)
+                if (res.data.success) {
+                    setInfo(res.data.data)
+                    if (info?.quantidadeDigitos) {
+                        setQuantidadeDigitos(info!.quantidadeDigitos!)
+                    }
+                }
+                else {
+                    toast.error(res.data.errorMessage)
+                }
             })
 
             instance.get('/listarvendedoridlabel').then(res => {
@@ -167,17 +175,19 @@ export default function RifaPage() {
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div className='flex flex-row space-x-1'>
                     <Input
-                        type="number"
-                        inputMode="numeric"
-                        placeholder={`${info?.quantidadeDigitos ?? 4} dígitos`}
+                        placeholder={`${quantidadeDigitos} dígitos`}
                         value={numero}
-                        onChange={(e) => setNumero(e.target.value)}
+
+                        type="text"
+                        inputMode="numeric"   // mostra teclado numérico no mobile
+                        pattern="[0-9]*"      // força apenas dígitos
+                        maxLength={quantidadeDigitos}
+                        onChange={(e) => setNumero(e.target.value.replace(/\D/g, ''))}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && empresaIdStr && rifaIdStr) {
                                 fetchBilhetes({ empresaId: empresaIdStr, rifaId: rifaIdStr, numero: numero })
                             }
                         }}
-                        maxLength={info?.quantidadeDigitos ?? 4}
                         className="text-xl w-[100px] text-center font-bold p-1"
                     />
 
