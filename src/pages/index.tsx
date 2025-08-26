@@ -21,7 +21,8 @@ interface Rifa {
   id: number
   rifaModeloId: number
   modalidadeVenda: string
-  dataSorteio: string
+  dataSorteioFormatada: string
+  tipo:string
   quantidadeNumeros: number
   quantidadeNumerosPorBilhete: number
   empresaId: number
@@ -111,7 +112,8 @@ export default function DashboardPage() {
                     <Link key={rifa.id} href={`/rifa/${empresa.empresaId}/${rifa.id}`}>
                       <Card className="p-4 border-green-400">
 
-                        <h3 className="text-2xl  font-bold">{rifa.dataSorteio}</h3>
+                        <h3 className="text-2xl  font-bold">{rifa.dataSorteioFormatada}</h3>
+                        <p className="text-lg font-semibold">{rifa.tipo}</p>
                         <p className="text-lg font-semibold">{rifa.descricao}</p>
 
                       </Card>
