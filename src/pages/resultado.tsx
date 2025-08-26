@@ -122,6 +122,7 @@ export default function CadastroEdicaoResultadoPage() {
     const limparCampos = () => {
 
         setNumeros(Array(10).fill(''))
+        setRifas([])
     }
 
     return (
