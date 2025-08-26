@@ -1,21 +1,25 @@
 // components/PrivateRoute.tsx
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useAppContext } from 'src/contexts/AppContext'
 import { useAuth } from 'src/contexts/AuthContext';
+import GlobalLoader from './Loading';
 
 export default function PrivateRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { hideLoader } = useAppContext();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace('/login')
-    } else {
-      hideLoader()
+ useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [router])
+    
+  }, [isAuthenticated, isLoading, router]);
 
-  return <>{children}</>
+  if (isLoading) {
+    return (
+      <GlobalLoader />
+    );
+  }
+
+  return isAuthenticated ? <>{children}</> : null;
 }
