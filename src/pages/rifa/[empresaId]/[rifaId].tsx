@@ -17,6 +17,7 @@ import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 import { Premiacao } from '@common/data'
 import Modal from '@components/Modal'
+import DownloadConferenciaButton from '@components/DownloadConferenciaButton'
 
 interface RifaInfo {
     id: number;
@@ -160,6 +161,7 @@ export default function RifaPage() {
             </div>
 
             <div className="flex flex-wrap gap-2">
+                <DownloadConferenciaButton rifaId={rifaIdStr}></DownloadConferenciaButton>
                 <Button className="bg-blue-600 text-white w-[120px]">Conferência</Button>
                 {/*<Button className="bg-blue-600 text-white">Conf por Vendedor...</Button>*/}
                 <Button className="bg-blue-600 text-white w-[120px]">Vales</Button>
