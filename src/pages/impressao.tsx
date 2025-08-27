@@ -6,7 +6,6 @@ import {
     DragEndEvent
 } from '@dnd-kit/core';
 import { CSS, Transform } from '@dnd-kit/utilities';
-import { useSnackbar } from 'notistack';
 
 // --- Importações de bibliotecas sem estilo (Radix UI e Headless UI) ---
 import * as RadioGroup from '@radix-ui/react-radio-group';
@@ -15,6 +14,7 @@ import { Dialog as HeadlessDialog, DialogPanel, DialogTitle, TransitionChild } f
 import { useAuth } from 'src/contexts/AuthContext';
 import instance from '@lib/axios';
 import { Button } from '@components/ui/button';
+import { toast } from 'react-toastify';
 
 
 // --- Constantes ---
@@ -98,7 +98,6 @@ interface PrintTestApiResponse {
 
 const Builder: React.FC = () => {
     const { user } = useAuth();
-    const { enqueueSnackbar } = useSnackbar();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [numPositions, setNumPositions] = useState<number>(1);
@@ -118,18 +117,13 @@ const Builder: React.FC = () => {
     const [isFetchingLayout, setIsFetchingLayout] = useState(false);
     const [testPdfLink, setTestPdfLink] = useState<string | null>(null);
 
-
-    const handleSliderChange = (value: number[]) => {
-        setNumPositions(value[0]);
-    };
-
     const handleRadioChange = (value: string) => {
         setOrientation(value as 'retrato' | 'paisagem');
     };
 
     const handleSubmitForm = () => {
         if (!user?.token) {
-            enqueueSnackbar('Token de autenticação não disponível. Faça login novamente.', { variant: 'error' });
+            toast.error('Token de autenticação não disponível. Faça login novamente.');
             return;
         }
 
@@ -190,15 +184,15 @@ const Builder: React.FC = () => {
                         }
                     }
                     setItemTransforms(loadedTransforms);
-                    enqueueSnackbar('Layout carregado com sucesso!', { variant: 'success' });
+                    toast.success('Layout carregado com sucesso!');
                     setIsModalOpen(false);
                 } else {
-                    enqueueSnackbar(res.data.errorMessage || 'Erro ao carregar layout: Dados inválidos.', { variant: 'error' });
+                    toast.error(res.data.errorMessage || 'Erro ao carregar layout: Dados inválidos.');
                 }
             })
             .catch((error) => {
                 console.error('Erro na chamada da API de carregar layout:', error);
-                enqueueSnackbar('Não foi possível conectar ao servidor para carregar o layout.', { variant: 'error' });
+                toast.error('Não foi possível conectar ao servidor para carregar o layout.');
             })
             .finally(() => {
                 setIsFetchingLayout(false);
@@ -233,15 +227,15 @@ const Builder: React.FC = () => {
         requiresCodigoValidation: boolean
     ) => {
         if (!user?.token) {
-            enqueueSnackbar('Token de autenticação não disponível. Faça login novamente.', { variant: 'error' });
+            toast.error('Token de autenticação não disponível. Faça login novamente.',);
             return;
         }
         if (!panelConfig) {
-            enqueueSnackbar('Por favor, configure o layout antes de gerar o arquivo.', { variant: 'warning' });
+            toast.warn('Por favor, configure o layout antes de gerar o arquivo.');
             return;
         }
         if (requiresCodigoValidation && codigo.length !== 5) {
-            enqueueSnackbar('O código deve ter 5 caracteres.', { variant: 'warning' });
+            toast.warn('O código deve ter 5 caracteres.');
             return;
         }
 
@@ -257,7 +251,7 @@ const Builder: React.FC = () => {
             const bilheteTransform = itemTransforms[bilheteId];
 
             if (!canhotoTransform || !bilheteTransform) {
-                enqueueSnackbar('Erro: Posições de todos os Canhotos/Bilhetes não foram encontradas.', { variant: 'error' });
+                toast.error('Erro: Posições de todos os Canhotos/Bilhetes não foram encontradas.');
                 setIsSubmitting(false);
                 return;
             }
@@ -281,22 +275,22 @@ const Builder: React.FC = () => {
                     if (endpointSuffix === 'gerararquivotesteimpressao') {
                         if (res.data.data) {
                             setTestPdfLink(res.data.data);
-                            enqueueSnackbar('Link para o arquivo de teste de impressão gerado. Clique no link abaixo para baixar.', { variant: 'success' });
+                            toast.success('Link para o arquivo de teste de impressão gerado. Clique no link abaixo para baixar.');
                             setCodigo('');
                         } else {
-                            enqueueSnackbar('Erro: Link de download não encontrado na resposta do teste de impressão.', { variant: 'error' });
+                            toast.error('Erro: Link de download não encontrado na resposta do teste de impressão.');
                         }
                     } else {
-                        enqueueSnackbar('Arquivo de impressão gerado com sucesso!', { variant: 'success' });
+                        toast.success('Arquivo de impressão gerado com sucesso!');
                         setCodigo('');
                     }
                 } else {
-                    enqueueSnackbar(res.data.errorMessage || `Erro desconhecido ao gerar arquivo via ${endpointSuffix}.`, { variant: 'error' });
+                    toast.error(res.data.errorMessage || `Erro desconhecido ao gerar arquivo via ${endpointSuffix}.`);
                 }
             })
             .catch((error) => {
                 console.error(`Erro na chamada da API de ${endpointSuffix}:`, error);
-                enqueueSnackbar(`Não foi possível conectar ao servidor para ${endpointSuffix}.`, { variant: 'error' });
+                toast.error(`Não foi possível conectar ao servidor para ${endpointSuffix}.`);
             })
             .finally(() => {
                 setIsSubmitting(false);
