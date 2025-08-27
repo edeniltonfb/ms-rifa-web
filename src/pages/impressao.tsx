@@ -60,9 +60,12 @@ function DraggableItem({ id, content, initialTransform }: DraggableItemProps) {
             style={style}
             {...listeners}
             {...attributes}
-            className="p-2 border border-gray-400 bg-white shadow-md flex justify-center items-center font-bold select-none absolute"
+            className="p-2 border border-gray-400 bg-white shadow-md flex flex-col justify-center items-center font-bold select-none absolute"
         >
-            {content}
+            <div>{content}</div>
+            <div className="text-xs text-gray-500 mt-1">
+                ({Math.round(finalTransform.x)}, {Math.round(finalTransform.y)})
+            </div>
         </div>
     );
 }
