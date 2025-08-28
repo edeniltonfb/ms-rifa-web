@@ -1,6 +1,7 @@
 import { Button } from '@components/ui/button'
 import instance from '@lib/axios'
 import { toast } from 'react-toastify'
+import { useAppContext } from 'src/contexts/AppContext';
 
 interface DownloadButtonProps {
   rifaId: string
@@ -8,8 +9,11 @@ interface DownloadButtonProps {
 
 export default function DownloadConferenciaButton({ rifaId }: DownloadButtonProps) {
 
+  const { showLoader, hideLoader } = useAppContext();
+
   const handleDownload = async () => {
     try {
+      showLoader();
       const res = await instance.post(`/gerararquivoconferencia?rifaId=${rifaId}`)
 
       if (res.data && res.data.success && res.data.data) {
@@ -27,6 +31,8 @@ export default function DownloadConferenciaButton({ rifaId }: DownloadButtonProp
       }
     } catch (err) {
       toast.error('Falha ao se comunicar com o servidor')
+    } finally {
+      hideLoader();
     }
   }
 
