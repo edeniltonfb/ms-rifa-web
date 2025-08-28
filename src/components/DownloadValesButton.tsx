@@ -8,14 +8,14 @@ interface DownloadButtonProps {
   rifaId: string
 }
 
-export default function DownloadConferenciaButton({ rifaId }: DownloadButtonProps) {
+export default function DownloadValesButton({ rifaId }: DownloadButtonProps) {
 
   const { showLoader, hideLoader } = useAppContext();
 
   const handleDownload = async () => {
     try {
       showLoader();
-      const res = await instance.post(`/gerararquivoconferencia?rifaId=${rifaId}`)
+      const res = await instance.post(`/gerararquivovales?rifaId=${rifaId}`)
 
       if (res.data && res.data.success && res.data.data) {
         const url = res.data.data as string
@@ -39,7 +39,7 @@ export default function DownloadConferenciaButton({ rifaId }: DownloadButtonProp
 
   return (
     <Button className="bg-blue-600 text-white" onClick={handleDownload}>
-       <div className='flex flex-row'> <DownloadIcon/> Conferência</div>
+      <div className='flex flex-row'> <DownloadIcon/> <span className='pl-3'>Vales</span></div>
     </Button>
   )
 }
