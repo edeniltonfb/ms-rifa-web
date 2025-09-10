@@ -117,8 +117,8 @@ export default function VendedoresListPage() {
                                 <td className="p-2">
                                     <span
                                         className={`text-xs font-semibold px-2 py-1 rounded ${v.ativo
-                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
                                             }`}
                                     >
                                         {v.ativo ? 'Ativo' : 'Inativo'}
@@ -148,8 +148,8 @@ export default function VendedoresListPage() {
                                 <strong>Status:</strong>{' '}
                                 <span
                                     className={`px-2 py-1 text-xs rounded ${v.ativo
-                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
                                         }`}
                                 >
                                     {v.ativo ? 'Ativo' : 'Inativo'}
@@ -163,6 +163,19 @@ export default function VendedoresListPage() {
                 </div>
             </div>
 
+            {data && data.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-4">
+                    <Button disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
+                        Anterior
+                    </Button>
+                    <span className="text-sm">
+                        Página {data.number + 1} de {data.totalPages}
+                    </span>
+                    <Button disabled={page + 1 >= data.totalPages} onClick={() => setPage((p) => p + 1)}>
+                        Próxima
+                    </Button>
+                </div>
+            )}
         </div>
     )
 }
