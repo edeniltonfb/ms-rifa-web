@@ -74,9 +74,9 @@ export default function VendedorEditPage() {
 
     const validate = () => {
         const newErrors: typeof errors = {}
-        if (!/^[0-9]{4}$/.test(form.login)) newErrors.login = 'Login deve conter 4 números'
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'E-mail inválido'
-        if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(form.whatsapp)) newErrors.whatsapp = 'WhatsApp inválido'
+        //if (!/^[0-9]{4}$/.test(form.login)) newErrors.login = 'Login deve conter 4 números'
+        //if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'E-mail inválido'
+        //if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(form.whatsapp)) newErrors.whatsapp = 'WhatsApp inválido'
         if (!form.cobradorId) newErrors.cobradorId = 'Selecione um cobrador'
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
