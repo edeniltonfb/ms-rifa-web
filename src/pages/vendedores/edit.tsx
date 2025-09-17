@@ -12,10 +12,10 @@ import { toast } from 'react-toastify'
 interface VendedorForm {
     id?: number
     nome: string
-    login: string
-    comissao: number
-    email: string
-    whatsapp: string
+    login?: string
+    comissao?: number
+    email?: string
+    whatsapp?: string
     ativo: boolean
     cobradorId?: number
 }
@@ -31,10 +31,10 @@ export default function VendedorEditPage() {
 
     const [form, setForm] = useState<VendedorForm>({
         nome: '',
-        login: '',
-        comissao: 0,
-        email: '',
-        whatsapp: '',
+        //login: '',
+        //comissao: 0,
+        //email: '',
+        //whatsapp: '',
         ativo: true,
         cobradorId: undefined,
     })
@@ -99,7 +99,7 @@ export default function VendedorEditPage() {
         try {
             const response = await instance.post('/cadastrarvendedor', {
                 ...form,
-                whatsapp: form.whatsapp.replace(/\D/g, ''),
+                whatsapp: form.whatsapp?.replace(/\D/g, ''),
             })
             if (response.data.success) {
                 router.push('/vendedores')
@@ -123,7 +123,7 @@ export default function VendedorEditPage() {
                     <Input value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} />
                 </div>
 
-                <div>
+              {/*  <div>
                     <label className="block text-sm font-medium">Login</label>
                     <Input
                         value={form.login}
@@ -158,7 +158,7 @@ export default function VendedorEditPage() {
                     />
                     {errors.whatsapp && <p className="text-sm text-red-500">{errors.whatsapp}</p>}
                 </div>
-
+*/}
                 <div>
                     <label className="block text-sm font-medium">Cobrador</label>
                     <select

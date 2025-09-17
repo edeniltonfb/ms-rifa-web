@@ -55,9 +55,9 @@ export default function CobradorEditPage() {
 
     const validate = () => {
         const newErrors: typeof errors = {}
-        if (!/^[0-9]{4}$/.test(form.login)) newErrors.login = 'Login deve conter 4 números'
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'E-mail inválido'
-        if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(form.whatsapp)) newErrors.whatsapp = 'WhatsApp inválido'
+        //if (!/^[0-9]{4}$/.test(form.login)) newErrors.login = 'Login deve conter 4 números'
+        //if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'E-mail inválido'
+        //if (!/^\(\d{2}\) \d{5}-\d{4}$/.test(form.whatsapp)) newErrors.whatsapp = 'WhatsApp inválido'
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -103,7 +103,7 @@ export default function CobradorEditPage() {
                     <Input value={form.nome} onChange={(e) => handleChange('nome', e.target.value)} />
                 </div>
 
-                <div>
+                {/*<div>
                     <label className="block text-sm font-medium">Login</label>
                     <Input
                         value={form.login}
@@ -137,7 +137,7 @@ export default function CobradorEditPage() {
                         maxLength={15}
                     />
                     {errors.whatsapp && <p className="text-sm text-red-500">{errors.whatsapp}</p>}
-                </div>
+                </div>*/}
 
                 <div className="flex items-center gap-2">
                     <input
