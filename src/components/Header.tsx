@@ -1,7 +1,10 @@
 // Header.tsx
 'use client'
 
+import { SelectedTabInfo } from '@common/data';
 import { usePathname, useRouter } from 'next/navigation' // Importe usePathname
+import { useEffect, useState } from 'react';
+import { useEmpresaContext } from 'src/contexts/EmpresaContext';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -10,6 +13,8 @@ interface HeaderProps {
 
 export default function Header({ toggleSidebar }: HeaderProps) {
   const pathname = usePathname(); // Obtenha o caminho da URL atual
+  const { selectedEmpresa } = useEmpresaContext();
+  const empresaNome = selectedEmpresa?.nome || '';
 
   // Defina um mapeamento de rotas para títulos
   const getPageTitle = (path: string) => {
@@ -55,6 +60,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
         </button>
         {/* Use o título dinâmico aqui */}
         <h1 className="text-lg font-semibold text-white">{currentTitle}</h1>
+        <h1 className="text-lg font-semibold text-[#FF0] animate-bounce">{empresaNome}</h1>
       </div>
 
 

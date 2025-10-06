@@ -5,8 +5,8 @@ export interface ApiResult {
 }
 
 export const horarios = [
-  { label: 'Federal', value: 'FED' },
-  { label: '19hs Bahia', value: '19B' }
+    { label: 'Federal', value: 'FED' },
+    { label: '19hs Bahia', value: '19B' }
 ]
 
 export const faixas = [
@@ -53,14 +53,14 @@ export interface Talao {
 }
 
 export interface GenericPageableResponseTO<T> {
-  success: boolean
-  errorMessage: string | null
-  data: {
-    content: T[]
-    totalPages: number
-    totalElements: number
-    number: number
-  }
+    success: boolean
+    errorMessage: string | null
+    data: {
+        content: T[]
+        totalPages: number
+        totalElements: number
+        number: number
+    }
 }
 
 export interface AppContextType {
@@ -74,7 +74,7 @@ export interface Premiacao {
     ordem: number;
     descricao: string;
     valor: number;
-    horario:string;
+    horario: string;
 }
 
 export type Resultado = {
@@ -147,9 +147,9 @@ export interface Rifa {
         vendedor: string
         ordem: number
         descricao: string
-        cidadeApostador:string
-        cidadeVendedor:string
-        situacao:string
+        cidadeApostador: string
+        cidadeVendedor: string
+        situacao: string
     }[]
 }
 
@@ -216,3 +216,8 @@ export type CidadeIBGE = {
         };
     };
 };
+
+export interface SelectedTabInfo {
+    id: string; // ID da empresa
+    nome: string; // Nome da empresa
+}
