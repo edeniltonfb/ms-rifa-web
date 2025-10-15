@@ -45,7 +45,7 @@ const CustomSelect = <T,>({
                         ? 'dark:bg-gray-900 border-indigo-500 ring-2 ring-indigo-500'
                         : 'dark:bg-gray-900 dark:border-gray-700',
                 menu: () =>
-                    'z-100 dark:bg-gray-900 dark:border dark:border-gray-700', // ❌ sem max-h/overflow aqui
+                    'z-50 dark:bg-gray-900 dark:border dark:border-gray-700', // ❌ sem max-h/overflow aqui
                 option: (state: any) =>
                     state.isSelected
                         ? 'dark:bg-indigo-600 dark:text-white bg-indigo-600 text-white'
