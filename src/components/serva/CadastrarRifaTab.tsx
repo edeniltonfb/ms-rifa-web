@@ -9,7 +9,7 @@ import CustomSelect from '@components/CustomCombobox'
 import { NumericFormat } from 'react-number-format'
 import Link from 'next/link'
 import { horarios } from '@common/data'
-import { Trash } from 'lucide-react'
+import { Copy, Trash, X } from 'lucide-react'
 
 interface IdLabel {
     id: number
@@ -46,6 +46,14 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
     const [premiacaoList, setPremiacaoList] = useState<Premiacao[]>([{ ordem: 1, valor: '', descricao: '', horario: '' }])
     const { showLoader, hideLoader } = useAppContext()
     const [rifaIdCriada, setRifaIdCriada] = useState<number | null>(null)
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [rifasPorEmpresa, setRifasPorEmpresa] = useState<{ [key: number]: IdLabel[] }>({})
+    const [rifaSelecionada, setRifaSelecionada] = useState<IdLabel | null>(null)
+
+    const rifasOptions = rifasPorEmpresa[empresaId] || []
+
 
     useEffect(() => {
         const fetchVendedores = async () => {
@@ -150,6 +158,68 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
         setQuantidadeNumerosPorBilhete('')
         setCambistasSelecionados([])
         setPremiacaoList([{ ordem: 1, valor: '', descricao: '', horario: '' }])
+    }
+
+    const handleOpenModal = () => {
+        carregarRifas(empresaId)
+        setIsModalOpen(true)
+    }
+
+    const carregarRifas = async (empresaId: number) => {
+        if (rifasPorEmpresa[empresaId]) return
+
+        const res = await instance.get(`/listarrifasporempresa?empresaId=${empresaId}`).finally(() => hideLoader())
+        if (res.data.success) {
+            setRifasPorEmpresa(prev => ({ ...prev, [empresaId]: res.data.data }))
+        } else {
+            toast.error(res.data.errorMessage)
+        }
+    }
+
+    const copiarRifa = async () => {
+        if (!rifaSelecionada) {
+            return toast.error('Selecione uma rifa para copiar.')
+        }
+
+        showLoader()
+        try {
+            const res = await instance.get(`/buscarrifa?rifaId=${rifaSelecionada.id}`)
+
+            if (res.data.success) {
+                const data = res.data.data
+
+                // 1. Limpar campos antes de preencher
+                limparCampos()
+
+                // 2. Preencher campos principais
+                setModalidadeVenda(data.modalidadeVenda) // Assume que o dado já vem no formato {label, value}
+                setDataSorteio(data.dataSorteio || '')
+                setDescricao(data.descricao || '')
+                setQuantidadeNumeros(String(data.quantidadeNumeros || ''))
+                setQuantidadeBilhetesTalao(String(data.quantidadeBilhetesTalao || ''))
+                setQuantidadeNumerosPorBilhete(String(data.quantidadeNumerosPorBilhete || ''))
+
+                // 4. Preencher premiações
+                setPremiacaoList(data.premiacaoList || [{ ordem: 1, valor: '', descricao: '', horario: '' }])
+
+                toast.success(`Dados da rifa "${rifaSelecionada.label}" copiados com sucesso!`)
+                setIsModalOpen(false)
+                setRifaSelecionada(null)
+
+            } else {
+                toast.error(res.data.errorMessage)
+            }
+        } catch (e) {
+            toast.error('Erro ao buscar dados da rifa.')
+        } finally {
+            hideLoader()
+        }
+    }
+
+    // Lógica para fechar o modal
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setRifaSelecionada(null)
     }
 
     return (
@@ -259,7 +329,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                             disabled={premiacaoList.length <= 1}
                             className="ml-auto"
                         >
-                            <Trash/>
+                            <Trash />
                         </Button>
                     </div>
                 ))}
@@ -268,9 +338,21 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                 </Button>
             </div>
 
-            <Button onClick={handleSubmit} className="bg-blue-600 text-white hover:bg-blue-700">
-                Cadastrar Rifa
-            </Button>
+            <div className="flex gap-4 pt-2">
+                <Button onClick={handleSubmit} className="bg-blue-600 text-white hover:bg-blue-700 shadow-md">
+                    Cadastrar Rifa
+                </Button>
+
+                {/* 🆕 Botão para Abrir Modal de Cópia */}
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleOpenModal}
+                    className="flex items-center gap-1 shadow-md"
+                >
+                    <Copy className="w-4 h-4" /> Copiar dados...
+                </Button>
+            </div>
 
             {rifaIdCriada && (
                 <div className="mt-2">
@@ -280,6 +362,81 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                     >
                         Acessar rifa criada
                     </Link>
+                </div>
+            )}
+
+            {/* 🆕 Modal de Cópia */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all">
+                        <div className="flex justify-between items-center mb-4 border-b pb-2 dark:border-gray-700">
+                            <h3 className="text-xl font-bold dark:text-white">Copiar Dados de Rifa Existente</h3>
+                            <Button onClick={handleCloseModal} className="p-1 h-auto">
+                                <X className="w-6 h-6 dark:text-white" />
+                            </Button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Selecione a Rifa
+                            </label>
+                            {/* Reutilizando o Select mockado, mas populado com as rifas carregadas */}
+                            <Select
+                                placeholder="Buscar e selecionar rifa..."
+                                options={rifasOptions}
+                                value={rifaSelecionada}
+                                onChange={(v: any) => setRifaSelecionada(v)}
+                                classNames={{
+                                    control: (state: any) =>
+                                        state.isFocused
+                                            ? 'dark:bg-gray-900 border-indigo-500 ring-2 ring-indigo-500'
+                                            : 'dark:bg-gray-900 dark:border-gray-700',
+                                    menu: () =>
+                                        'z-50 dark:bg-gray-900 dark:border dark:border-gray-700', // ❌ sem max-h/overflow aqui
+                                    option: (state: any) =>
+                                        state.isSelected
+                                            ? 'dark:bg-indigo-600 dark:text-white bg-indigo-600 text-white'
+                                            : state.isFocused
+                                                ? 'dark:bg-indigo-500 dark:text-white bg-indigo-500 text-white'
+                                                : 'dark:bg-gray-800 dark:text-white bg-white',
+                                    singleValue: () => 'dark:text-white',
+                                    multiValue: () =>
+                                        'dark:bg-gray-700 dark:text-white bg-gray-200 text-gray-800 rounded-md',
+                                    multiValueLabel: () => 'dark:text-white text-gray-800',
+                                    multiValueRemove: () => 'dark:hover:bg-gray-600 hover:bg-gray-300',
+                                    input: () => 'dark:text-white',
+                                    placeholder: () => 'dark:text-gray-400 text-gray-500',
+                                }}
+                                styles={{
+                                    menuList: (base: any) => ({
+                                        ...base,
+                                        maxHeight: 240, // 👈 aqui fica o limite de altura
+                                        overflowY: 'auto', // 👈 único scrollbar
+                                        paddingTop: 0,
+                                        paddingBottom: 0,
+                                    }),
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleCloseModal}
+                            >
+                                Fechar
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={copiarRifa}
+                                disabled={!rifaSelecionada}
+                                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400"
+                            >
+                                <Copy className="w-4 h-4 mr-2" /> Copiar
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
