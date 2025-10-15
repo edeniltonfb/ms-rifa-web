@@ -10,6 +10,8 @@ import { useAppContext } from 'src/contexts/AppContext'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { Separator } from '@components/ui/separator'
+import { SelectedTabInfo } from '@common/data'
+import { useEmpresaContext } from 'src/contexts/EmpresaContext'
 
 interface RifaModelo {
   id: number
@@ -22,7 +24,7 @@ interface Rifa {
   rifaModeloId: number
   modalidadeVenda: string
   dataSorteioFormatada: string
-  tipo:string
+  tipo: string
   quantidadeNumeros: number
   quantidadeNumerosPorBilhete: number
   empresaId: number
@@ -43,10 +45,17 @@ interface DashboardResponse {
   data: EmpresaDashboard[]
 }
 
+
+
+
+const SELECTED_TAB_KEY = 'selectedEmpresaId';
+
 export default function DashboardPage() {
   const [empresas, setEmpresas] = useState<EmpresaDashboard[]>([])
-  const [selectedEmpresaId, setSelectedEmpresaId] = useState<string>('')
+  const { selectedEmpresa, setSelectedEmpresa } = useEmpresaContext();
   const { showLoader, hideLoader } = useAppContext();
+
+  const selectedEmpresaId = selectedEmpresa?.id || '';
 
   useEffect(() => {
     showLoader();
@@ -62,16 +71,43 @@ export default function DashboardPage() {
       .finally(() => hideLoader())
   }, [])
 
+
   useEffect(() => {
     if (empresas.length > 0) {
-      setSelectedEmpresaId(empresas[0].empresaId.toString())
+      // 1. Tenta usar o valor do contexto se ele for válido na lista de empresas
+      const storedId = selectedEmpresa?.id;
+      const isValidStoredId = empresas.some(empresa => empresa.empresaId.toString() === storedId);
+
+      if (storedId && isValidStoredId) {
+        // Nada a fazer, o contexto já tem o valor correto.
+      } else {
+        // 2. Caso contrário, define a primeira empresa como padrão (e atualiza o contexto/localStorage)
+        const primeiraEmpresa = empresas[0];
+        setSelectedEmpresa({
+          id: primeiraEmpresa.empresaId.toString(),
+          nome: primeiraEmpresa.empresaNome,
+        });
+      }
     }
-  }, [empresas])
+  }, [empresas, selectedEmpresa, setSelectedEmpresa])
+
+  // Função para lidar com a mudança de aba e ATUALIZAR O CONTEXTO
+  const handleTabChange = (newEmpresaId: string) => {
+    const empresaSelecionada = empresas.find(e => e.empresaId.toString() === newEmpresaId);
+
+    if (empresaSelecionada) {
+      // ATUALIZA O CONTEXTO (que também atualiza o localStorage)
+      setSelectedEmpresa({
+        id: newEmpresaId,
+        nome: empresaSelecionada.empresaNome,
+      });
+    }
+  }
+
 
   return (
     <div>
-      <Tabs value={selectedEmpresaId} onValueChange={setSelectedEmpresaId}
-        className="w-full">
+      <Tabs value={selectedEmpresaId} onValueChange={handleTabChange} className="w-full">
         <TabsList className="flex flex-wrap gap-1 mb-4">
           {empresas.map((empresa) => (
             <TabsTrigger
