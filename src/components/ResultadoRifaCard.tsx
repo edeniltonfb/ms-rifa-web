@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import instance from '@lib/axios'
 import { Rifa, situacoes } from '@common/data'
 import { useAppContext } from 'src/contexts/AppContext'
+import DownloadArquivoPremiacaoButton from './DownloadArquivoPremiacaoButton'
 
 export function RifaCard({ rifa }: { rifa: Rifa }) {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -19,6 +20,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             };
         })
     );
+    const [rifaFinalizada, setRifaFinalizada] = useState(false);
 
     useEffect(() => {
         setPremiacaoData(
@@ -31,7 +33,6 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             })
         );
     }, [rifa]);
-
 
     const { loading, showLoader, hideLoader } = useAppContext();
 
@@ -47,12 +48,6 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
         setPremiacaoData(updated)
     }
 
-    const openModal = async () => {
-
-
-        setIsModalOpen(true);
-
-    }
 
     const handleSalvar = async () => {
         // Validação básica:
@@ -69,7 +64,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
         });
 
         if (invalidItem) {
-            toast.error('Para prêmios com situação "VDD", a cidade do apostador é obrigatória.');
+            toast.error('Para prêmios com situação "Vendido", a cidade do apostador é obrigatória.');
             return;
         }
 
@@ -90,8 +85,10 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             if (res.data.success) {
                 if (res.data.data) {
                     toast.success('Rifa finalizada com sucesso!')
+                    setRifaFinalizada(true);
                 } else {
                     toast.success('Dados salvos. A rifa ainda não foi finalizada')
+                    setRifaFinalizada(false);
                 }
 
                 setIsModalOpen(false)
@@ -104,6 +101,8 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             hideLoader();
         }
     }
+
+
 
     return (
         <>
@@ -152,7 +151,9 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
                             <Button className="w-full mt-2" onClick={handleSalvar} disabled={loading}>
                                 {loading ? 'Salvando...' : 'Salvar'}
                             </Button>
-
+                            {rifaFinalizada &&
+                                <DownloadArquivoPremiacaoButton onButtonClick={() => setIsModalOpen(false)} rifaId={rifa.rifaId} />
+                            }
                             <Button className="w-full mt-2" onClick={() => setIsModalOpen(false)}>
                                 Fechar
                             </Button>
