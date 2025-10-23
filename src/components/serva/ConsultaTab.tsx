@@ -86,9 +86,9 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
             }).finally(() => hideLoader())
     }
 
-    const handleRemoverNumero = async (numero: string) => {
-        if (!vendedorSelecionado) return;
-
+    const handleRemoverNumero = async (numero: string, ignorarVendedor: boolean = false) => {
+        if (!vendedorSelecionado && !ignorarVendedor) return;
+        showLoader();
         try {
             const response = await instance.delete('/removerserva', {
                 params: {
@@ -100,14 +100,19 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
 
             if (response.data.success) {
                 toast.success(`Número ${numero} removido com sucesso`);
+                setResultadoConsulta(null);
                 // Recarrega a lista de números
-                await fetchServasByVendedor(vendedorSelecionado?.id);
+                if (vendedorSelecionado) {
+                    await fetchServasByVendedor(vendedorSelecionado!.id);
+                }
             } else {
                 toast.error(response.data.errorMessage || 'Erro ao remover número');
             }
         } catch (error) {
             toast.error('Erro na exclusão');
             console.error(error);
+        } finally {
+            hideLoader();
         }
     };
 
@@ -169,7 +174,10 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                     <p><strong>Número:</strong> {resultadoConsulta.numero}</p>
                     <p><strong>Status:</strong> {resultadoConsulta.cadastrada ? 'Cadastrado' : 'Disponível'}</p>
                     <p><strong>Vendedor:</strong> {resultadoConsulta.vendedor}</p>
-                    <Button className="w-auto p-2 mt-2 bg-blue-600 text-white " onClick={() => handleRemoverNumero(resultadoConsulta.numero)} >Excluir</Button>
+                    <Button className="w-auto p-2 mt-2 bg-blue-600 text-white rounded-md"
+                        onClick={() => handleRemoverNumero(resultadoConsulta.numero, true)} >
+                        Excluir
+                    </Button>
 
                 </div>
             )}
