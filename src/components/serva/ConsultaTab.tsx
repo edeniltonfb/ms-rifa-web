@@ -169,6 +169,8 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
                     <p><strong>Número:</strong> {resultadoConsulta.numero}</p>
                     <p><strong>Status:</strong> {resultadoConsulta.cadastrada ? 'Cadastrado' : 'Disponível'}</p>
                     <p><strong>Vendedor:</strong> {resultadoConsulta.vendedor}</p>
+                    <Button className="w-auto p-2 mt-2 bg-blue-600 text-white " onClick={() => handleRemoverNumero(resultadoConsulta.numero)} >Excluir</Button>
+
                 </div>
             )}
 
