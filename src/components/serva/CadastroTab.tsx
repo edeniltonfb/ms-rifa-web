@@ -118,6 +118,11 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
     }
 
     const handleRemoverTodos = async () => {
+        if(!vendedorSelecionado){
+            toast.error('Selecione o vendedor')
+            return;
+        }
+
         const result = await Swal.fire({
             title: 'Tem certeza que deseja apagar todas as servas do vendedor ' + vendedorSelecionado?.label + '?',
             text: 'Você não poderá desfazer essa ação!',
@@ -136,7 +141,7 @@ export default function CadastroTab({ empresaId, rifaModeloId, quantidadeDigitos
             showLoader()
             try {
                 const res = await instance.delete(
-                    `/removertodasservas?empresaId=${empresaId}&rifaModeloId=${rifaModeloId}&vendedorId=${vendedorSelecionado}`
+                    `/removertodasservas?empresaId=${empresaId}&rifaModeloId=${rifaModeloId}&vendedorId=${vendedorSelecionado?.id}`
                 )
                 if (res.data.success) {
                     toast.success('Número removido com sucesso')
