@@ -43,7 +43,7 @@ export default function DownloadArquivoPremiacaoButton({ rifaId, onButtonClick }
 
   return (
     <Button className="w-full mt-2 bg-blue-600 text-white " onClick={handleDownload}>
-      <div className='flex flex-row gap-2'> <DownloadIcon /> Conferência</div>
+      <div className='flex flex-row gap-2'> <DownloadIcon /> Baixar Arquivo</div>
     </Button>
   )
 }

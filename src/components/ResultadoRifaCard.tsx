@@ -20,7 +20,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             };
         })
     );
-    const [rifaFinalizada, setRifaFinalizada] = useState(false);
+    const [rifaFinalizada, setRifaFinalizada] = useState(rifa.permiteFinalizar);
 
     useEffect(() => {
         setPremiacaoData(
@@ -30,6 +30,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
                     ...item,
                     situacao: situacaoObj || { label: 'Indefinido', value: 'IND' }
                 };
+
             })
         );
     }, [rifa]);
@@ -48,6 +49,11 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
         setPremiacaoData(updated)
     }
 
+    const handleCidadeVendedorChange = (value: string, idx: number) => {
+        const updated = [...premiacaoData]
+        updated[idx].cidadeVendedor = value
+        setPremiacaoData(updated)
+    }
 
     const handleSalvar = async () => {
         // Validação básica:
@@ -126,8 +132,12 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
                     <div className="space-y-1 px-2">
                         {premiacaoData.map((item, idx) => (
 
-                            <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 border rounded p-2 items-center space-x-2 space-y-1 bg-gray-50 dark:bg-gray-800">
+                            <div
+                                key={idx}
+                                className="grid grid-cols-1 sm:grid-cols-3 border rounded p-2 items-center gap-2 bg-gray-50 dark:bg-gray-800"
+                            >
                                 <div className="text-3xl font-bold text-center">{item.numero}</div>
+
                                 <div>
                                     <Select
                                         options={situacoes}
@@ -136,16 +146,36 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
                                         placeholder="Situação"
                                         isClearable
                                     />
-
                                 </div>
-                                <div>
+
+                                <div className="sm:col-span-3 flex flex-col sm:flex-row gap-2 items-center">
                                     <Input
+                                        className="flex-1"
                                         placeholder="Cidade do ganhador"
                                         value={item.cidadeApostador}
                                         onChange={(e: any) => handleCidadeChange(e.target.value, idx)}
                                     />
+                                    {item.ordem === 1 &&
+                                        <>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleCidadeVendedorChange(item.cidadeApostador, idx)}
+                                                className="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white text-sm transition"
+                                                title="Repetir cidade do ganhador"
+                                            >
+                                                ↻
+                                            </button>
+
+                                            <Input
+                                                className="flex-1"
+                                                placeholder="Cidade do vendedor"
+                                                value={item.cidadeVendedor}
+                                                onChange={(e: any) => handleCidadeVendedorChange(e.target.value, idx)}
+                                            />
+                                        </>}
                                 </div>
                             </div>
+
                         ))}
                         <div className='flex flex-row space-x-4'>
                             <Button className="w-full mt-2" onClick={handleSalvar} disabled={loading}>

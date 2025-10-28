@@ -141,6 +141,7 @@ export interface Rifa {
     empresa: string
     data: string
     horario: string
+    permiteFinalizar: boolean;
     itemPremiacaoList: {
         numero: string
         talao: string
