@@ -169,6 +169,8 @@ export default function RifaPage() {
                 >
                     Prêmios...
                 </Button>
+                <Button className="bg-blue-600 text-white w-[120px]"><Link href={`/rifawhatsapp/${rifaId}`}>Venda Online</Link></Button>
+                
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

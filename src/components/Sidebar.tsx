@@ -114,7 +114,7 @@ export default function Sidebar({
             </Link>
           )}
 
-          {hasAccess(['ADMIN']) && (
+{/**           {hasAccess(['ADMIN']) && (
             <Link
               href="/rifawhatsapp"
               onClick={handleLinkClick}
@@ -127,6 +127,7 @@ export default function Sidebar({
               Vendas Whatsapp
             </Link>
           )}
+*/}
 
           {hasAccess(['ADMIN']) && (
             <Link
