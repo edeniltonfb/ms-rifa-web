@@ -184,7 +184,7 @@ export default function ConsultaTab({ empresaId, rifaModeloId, quantidadeDigitos
 
             {servas.length > 0 && (
                 <div className="mt-6">
-                    <h2 className="text-lg font-semibold mb-2">Números do vendedor</h2>
+                    <h2 className="text-lg font-semibold mb-2">Números do vendedor ({servas.length})</h2>
                     <div className="flex flex-wrap gap-2 mt-2">
                         {servas.map((s, idx) => (
                             <Card
