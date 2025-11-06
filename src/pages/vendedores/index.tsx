@@ -88,7 +88,7 @@ export default function VendedoresListPage() {
         if (result.isConfirmed) {
             try {
                 showLoader();
-                const res = await instance.get<GenericPageableResponseTO<Vendedor>>(`/excluirvendedor?vendedorId=${id}`)
+                const res = await instance.post<GenericPageableResponseTO<Vendedor>>(`/excluirvendedor?vendedorId=${id}`)
                 if (res.data && res.data.success) {
                     fetchData();
                 } else {
