@@ -6,6 +6,9 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import instance from '@lib/axios'
 import { useAppContext } from 'src/contexts/AppContext'
+import { FaEdit, FaTrash } from 'react-icons/fa'
+import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
 interface Vendedor {
     id: number
@@ -67,6 +70,41 @@ export default function VendedoresListPage() {
         fetchData()
     }
 
+    const handlerExcluir = async (id: number, nome: string) => {
+        const result = await Swal.fire({
+            title: 'Tem certeza que deseja excluir o vendedor ' + nome + '?',
+            text: 'Você não poderá desfazer essa ação!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'bg-[#F00] text-white px-4 py-2 rounded hover:bg-gray-800 mr-1',
+                cancelButton: 'bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 ml-1',
+            },
+            buttonsStyling: false,
+        });
+
+        if (result.isConfirmed) {
+            try {
+                showLoader();
+                const res = await instance.get<GenericPageableResponseTO<Vendedor>>(`/excluirvendedor?vendedorId=${id}`)
+                if (res.data && res.data.success) {
+                    fetchData();
+                } else {
+                    toast.error(res.data.errorMessage || 'Erro ao excluir vendedor.');
+                }
+
+            } catch (e) {
+                console.error('Erro ao excluir vendedor')
+            } finally {
+                hideLoader();
+            }
+        }
+    }
+
+
+
     return (
         <div>
             <div className="flex justify-between items-center mb-4">
@@ -124,10 +162,11 @@ export default function VendedoresListPage() {
                                         {v.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </td>
-                                <td className="p-2">
+                                <td className="p-2 flex gap-2">
                                     <Link href={`/vendedores/edit?id=${v.id}`}>
-                                        <Button variant="outline" size="sm">Editar</Button>
+                                        <Button className='w-min h-9' variant="outline" size="sm"><FaEdit></FaEdit></Button>
                                     </Link>
+                                    <Button size="sm" className="w-min h-9" variant="outline" onClick={() => handlerExcluir(v.id, v.nome)}><FaTrash /></Button>
                                 </td>
                             </tr>
                         ))}
@@ -156,8 +195,9 @@ export default function VendedoresListPage() {
                                 </span>
                             </div>
                             <Link href={`/vendedores/edit?id=${v.id}`}>
-                                <Button size="sm" className="w-full">Editar</Button>
+                                <Button size="sm" className="w-full"><FaEdit></FaEdit> </Button>
                             </Link>
+                            <Button size="sm" className="w-8" onClick={() => handlerExcluir(v.id, v.nome)}><FaTrash /></Button>
                         </div>
                     ))}
                 </div>
