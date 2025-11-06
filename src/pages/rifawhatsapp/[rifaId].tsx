@@ -10,6 +10,7 @@ import { Separator } from "@components/ui/separator"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { NumericFormat } from "react-number-format"
+import { currencyFormat } from "@common/utils/utils"
 
 interface ConfiguracaoVenda {
     horaLimiteVenda: string
@@ -114,7 +115,7 @@ export default function ConfiguracaoVendaWhatsappPage() {
         try {
             showLoader()
             const data = form.horaLimiteVenda
-            if(data == null){
+            if (data == null) {
                 toast.error('Selecione a data/hora limite para a venda')
                 return
             }
@@ -190,9 +191,9 @@ export default function ConfiguracaoVendaWhatsappPage() {
                     <div className="flex flex-wrap gap-4 items-center justify-between border p-4 rounded-md bg-gray-50 dark:bg-gray-900">
                         <div>
                             <p><strong>Hora limite:</strong> {config.horaLimiteVenda}</p>
-                            <p><strong>Valor bilhete:</strong> R$ {config.valorBilhete.toFixed(2)}</p>
-                            <p><strong>Comissão vendedor:</strong> R$ {config.comissaoVendedor.toFixed(2)}</p>
-                            <p><strong>Comissão cobrador:</strong> R$ {config.comissaoCobrador.toFixed(2)}</p>
+                            <p><strong>Valor bilhete:</strong> {currencyFormat(config.valorBilhete)}</p>
+                            <p><strong>Comissão vendedor:</strong> {currencyFormat(config.comissaoVendedor)}</p>
+                            <p><strong>Comissão cobrador:</strong> {currencyFormat(config.comissaoCobrador)}</p>
                             <p><strong>Status:</strong> {config.vendaHabilitada ? "Habilitada" : "Desabilitada"}</p>
                         </div>
 
@@ -218,7 +219,7 @@ export default function ConfiguracaoVendaWhatsappPage() {
 
             {!config &&
                 <Button onClick={() => setModalOpen(true)}>Configurar</Button>
-                            
+
             }
             <Separator />
 
@@ -283,7 +284,7 @@ export default function ConfiguracaoVendaWhatsappPage() {
                             <label className="text-sm">Hora Limite da Venda</label>
                             <DatePicker
                                 selected={form.horaLimiteVenda}
-                                onChange={(date: Date|null) => setForm((p) => ({ ...p, horaLimiteVenda: date }))}
+                                onChange={(date: Date | null) => setForm((p) => ({ ...p, horaLimiteVenda: date }))}
                                 showTimeSelect
                                 dateFormat="dd/MM/yyyy HH:mm"
                                 className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
