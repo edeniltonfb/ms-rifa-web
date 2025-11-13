@@ -10,6 +10,7 @@ import { NumericFormat } from 'react-number-format'
 import Link from 'next/link'
 import { horarios } from '@common/data'
 import { Copy, Trash, X } from 'lucide-react'
+import { Checkbox } from '@headlessui/react'
 
 interface IdLabel {
     id: number
@@ -41,6 +42,7 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
     const [quantidadeNumeros, setQuantidadeNumeros] = useState('')
     const [quantidadeBilhetesTalao, setQuantidadeBilhetesTalao] = useState('')
     const [quantidadeNumerosPorBilhete, setQuantidadeNumerosPorBilhete] = useState('')
+    const [complementar, setComplementar] = useState(true);
     const [cambistaList, setCambistaList] = useState<IdLabel[]>([])
     const [cambistasSelecionados, setCambistasSelecionados] = useState<IdLabel[]>([])
     const [premiacaoList, setPremiacaoList] = useState<Premiacao[]>([{ ordem: 1, valor: '', descricao: '', horario: '' }])
@@ -125,7 +127,8 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                 quantidadeBilhetesTalao: parseInt(quantidadeBilhetesTalao),
                 quantidadeNumerosPorBilhete: parseInt(quantidadeNumerosPorBilhete),
                 cambistaList: cambistasSelecionados.map(c => c.id),
-                premiacaoList: premiacaoList.map((p, idx) => ({ ...p, ordem: idx + 1 }))
+                premiacaoList: premiacaoList.map((p, idx) => ({ ...p, ordem: idx + 1 })),
+                complementar:complementar
             }
 
             const res = await instance.post('/cadastrarrifa', body)
@@ -270,7 +273,16 @@ export default function CadastrarRifaTab({ empresaId, rifaModeloId }: CadastrarR
                     value={quantidadeNumerosPorBilhete}
                     onChange={(e: any) => setQuantidadeNumerosPorBilhete(e.target.value)}
                 />
-
+                
+                <div className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        checked={complementar}
+                        onChange={(e) => setComplementar(e.target.checked)}
+                        id="complementar"
+                    />
+                    <label htmlFor="complementar">Complementar</label>
+                </div>
 
             </div>
             <CustomSelect<IdLabel>
