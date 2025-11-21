@@ -148,7 +148,7 @@ export default function VendedorEditPage() {
                     <Input value={form.email} onChange={(e) => handleChange('email', e.target.value)} />
                     {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
-
+*/}
                 <div>
                     <label className="block text-sm font-medium">WhatsApp</label>
                     <Input
@@ -158,7 +158,7 @@ export default function VendedorEditPage() {
                     />
                     {errors.whatsapp && <p className="text-sm text-red-500">{errors.whatsapp}</p>}
                 </div>
-*/}
+
                 <div>
                     <label className="block text-sm font-medium">Cobrador</label>
                     <select
